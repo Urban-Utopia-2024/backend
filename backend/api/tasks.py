@@ -1,7 +1,7 @@
-from celery import shared_task
+# from celery import shared_task
 
 
-@shared_task
-def print_hello():
-    print('hello')
-    return
+# @shared_task
+# def print_hello():
+#     print('hello')
+#     return
