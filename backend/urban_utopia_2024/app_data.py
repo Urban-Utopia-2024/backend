@@ -103,5 +103,7 @@ USER_RATING_MAX_VAL: float = 100.0
 
 """Security data."""
 
+CITE_DOMAIN: str = os.getenv('CITE_DOMAIN')
+CITE_IP: str = os.getenv('CITE_IP')
 
 SECRET_KEY: str = os.getenv('SECRET_KEY')
