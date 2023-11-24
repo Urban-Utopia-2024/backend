@@ -4,11 +4,15 @@ from rest_framework.routers import DefaultRouter
 from rest_framework.viewsets import ModelViewSet
 
 from api.v1.serializers import CustomTokenObtainPairSerializer
-from api.v1.views import CustomTokenObtainPairView, CustomTokenRefreshView, UserViewSet
+from api.v1.views import (
+    CustomTokenObtainPairView, CustomTokenRefreshView,
+    NewsViewSet, UserViewSet,
+)
 
 router: DefaultRouter = DefaultRouter()
 
 ROUTER_DATA: list[dict[str, ModelViewSet]] = [
+    {'prefix': 'news', 'viewset': NewsViewSet},
     {'prefix': 'users', 'viewset': UserViewSet},
 ]
 

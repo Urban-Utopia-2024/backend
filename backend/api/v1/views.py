@@ -4,8 +4,11 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView, TokenRefreshView,
 )
 
-from api.v1.serializers import UserRegisterSerializer
-from api.v1.schemas_views import USER_SCHEMA, TOKEN_OBTAIN_SCHEMA, TOKEN_REFRESH_SCHEMA
+from api.v1.serializers import NewsSerializer, UserRegisterSerializer
+from api.v1.schemas_views import (
+    NEWS_SCHEMA, TOKEN_OBTAIN_SCHEMA, TOKEN_REFRESH_SCHEMA, USERS_SCHEMA,
+)
+from info.models import News
 from user.models import User
 
 
@@ -19,8 +22,24 @@ class CustomTokenRefreshView(TokenRefreshView):
     pass
 
 
+@extend_schema_view(**NEWS_SCHEMA)
+class NewsViewSet(ModelViewSet):
+    """ViewSet для взаимодействия с моделью новостей."""
 
-@extend_schema_view(**USER_SCHEMA)
+    http_method_names = ('get',)
+    queryset = News.objects.select_related(
+        'category',
+        'address',
+        'quiz',
+    ).prefetch_related(
+        'picture',
+        'comment',
+    ).all()
+    serializer_class = NewsSerializer
+
+
+
+@extend_schema_view(**USERS_SCHEMA)
 class UserViewSet(ModelViewSet):
     """ViewSet для взаимодействия с моделью User."""
 
