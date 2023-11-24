@@ -59,6 +59,27 @@ class AnswerSerializer(serializers.ModelSerializer):
         return obj.answer_user.count()
 
 
+class UserFullSerializer(serializers.ModelSerializer):
+    """Сериализатор полного представления данных пользователя."""
+
+    address = AddressSerializer()
+
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'email',
+            'first_name',
+            'last_name',
+            'address',
+            'phone',
+            'photo',
+            'rating',
+            'is_municipal',
+            'municipal_name',
+        )
+
+
 class UserShortSerializer(serializers.ModelSerializer):
     """Сериализатор краткого представления данных пользователя."""
 
@@ -134,6 +155,7 @@ class NewsSerializer(serializers.ModelSerializer):
             'quiz',
             'picture',
         )
+
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     """Сериализатор регистрации пользователя."""

@@ -8,9 +8,10 @@ from user.validators import (
     PASS_ERROR, USER_FIRST_NAME_ERROR, USER_LAST_NAME_ERROR,
 )
 from api.v1.serializers import (
-    NewsSerializer, TokenObtainPairSerializer, UserRegisterSerializer, 
+    NewsSerializer, UserFullSerializer, UserRegisterSerializer,
 )
 
+DEFAULT_401: str = 'Учетные данные не были предоставлены.'
 DEFAULT_404: str = 'Страница не найдена.'
 
 NEWS_SCHEMA = {
@@ -27,10 +28,11 @@ NEWS_SCHEMA = {
         responses={
             status.HTTP_200_OK: NewsSerializer,
             status.HTTP_404_NOT_FOUND: inline_serializer(
-                name='cleaning_types_retrieve_error_404',
+                name='news_retrieve_error_404',
                 fields={
                     'detail': serializers.CharField(
-                        default=DEFAULT_404)
+                        default=DEFAULT_404
+                    ),
                 },
             ),
         },
@@ -108,6 +110,44 @@ USERS_SCHEMA = {
                         default=(
                             'Введенный номер телефона не действителен.'
                         ),
+                    ),
+                },
+            ),
+        },
+    ),
+    'list': extend_schema(
+        description='Возвращает список пользователей.',
+        summary='Получить список пользователей.',
+        responses={
+            status.HTTP_200_OK: UserFullSerializer,
+            status.HTTP_401_UNAUTHORIZED: inline_serializer(
+                name='users_create_error_400',
+                fields={
+                    'detail': serializers.CharField(
+                        default=DEFAULT_401,
+                    ),
+                },
+            ),
+        },
+    ),
+    'retrieve': extend_schema(
+        description='Возвращает пользователя с указанным идентификатором.',
+        summary='Получить пользователей.',
+        responses={
+            status.HTTP_200_OK: UserFullSerializer,
+            status.HTTP_401_UNAUTHORIZED: inline_serializer(
+                name='users_create_error_400',
+                fields={
+                    'detail': serializers.CharField(
+                        default=DEFAULT_401,
+                    ),
+                },
+            ),
+            status.HTTP_404_NOT_FOUND: inline_serializer(
+                name='user_retrieve_error_404',
+                fields={
+                    'detail': serializers.CharField(
+                        default=DEFAULT_404
                     ),
                 },
             ),
