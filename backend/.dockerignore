@@ -1,0 +1,11 @@
+venv
+.git
+db.sqlite3
+.idea
+.vscode
+.env
+
+*/migrations/*
+!*/migrations/__init__.py
+cadastral/service/migrations/*
+!cadastral/migrations/__init__.py

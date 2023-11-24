@@ -1,0 +1,51 @@
+version: '3.8'
+
+volumes:
+  urban_utopia_2024_database_volume:
+  urban_utopia_2024_static_volume:
+  urban_utopia_2024_media_volume:
+
+services:
+
+  urban_utopia_2024_database:
+    image: postgres:15-alpine
+    volumes:
+      - urban_utopia_2024_database_volume:/var/lib/postgresql/data/
+    env_file:
+      - backend/.env
+
+  urban_utopia_2024_redis:
+    image: redis:7.2.1-alpine
+
+  urban_utopia_2024_backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile_dev
+    env_file: backend/.env
+    volumes:
+      - urban_utopia_2024_static_volume:/app/static
+      - urban_utopia_2024_media_volume:/app/media
+    depends_on:
+      - urban_utopia_2024_database
+      - urban_utopia_2024_redis
+
+  # urban_utopia_2024_frontend:
+  #   build:
+  #     context: ../frontend
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - urban_utopia_2024_static_volume:/app/build
+  #   depends_on:
+  #     - urban_utopia_2024_backend
+
+  urban_utopia_2024_gateway:
+    image: nginx:1.19.3-alpine
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./gateway/nginx.conf:/etc/nginx/conf.d/default.conf
+      - urban_utopia_2024_static_volume:/var/html/static/
+      - urban_utopia_2024_media_volume:/var/html/media/
+    depends_on:
+      - urban_utopia_2024_backend
+      # - urban_utopia_2024_frontend
