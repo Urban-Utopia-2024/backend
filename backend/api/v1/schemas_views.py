@@ -1,4 +1,7 @@
 from rest_framework import status, serializers
+from rest_framework_simplejwt.serializers import (
+    TokenObtainPairSerializer, TokenRefreshSerializer,
+)
 from drf_spectacular.utils import inline_serializer, extend_schema
 
 from user.validators import (
@@ -6,9 +9,51 @@ from user.validators import (
 )
 
 from api.v1.serializers import (
-    UserRegisterSerializer,
+    UserRegisterSerializer, TokenObtainPairSerializer,
 )
 
+TOKEN_OBTAIN_SCHEMA: dict[str, str] = {
+    'description': (
+        'Принимает набор учетных данных пользователя и возвращает '
+        'пару JWT-токенов доступа и обновления.'
+    ),
+    'summary': 'Получить пару JWT-токенов доступа и обновления.',
+    'responses': {
+        status.HTTP_200_OK: TokenObtainPairSerializer,
+        status.HTTP_400_BAD_REQUEST: inline_serializer(
+            name='token_pair_create_error_400',
+            fields={
+                'detail': serializers.CharField(
+                    default=(
+                        'No active account found with the given credentials'
+                    ),
+                ),
+            },
+        ),
+    },
+}
+
+TOKEN_REFRESH_SCHEMA: dict[str, str] = {
+    'description': (
+        'Принимает JWT-токен обновления и возвращает JWT-токен доступа, '
+        'если токен обновления действителен.'
+    ),
+    'summary': 'Обновить JWT-токен доступа.',
+    'responses': {
+        status.HTTP_200_OK: TokenRefreshSerializer,
+        status.HTTP_400_BAD_REQUEST: inline_serializer(
+            name='access_token_refresh_error_400',
+            fields={
+                'detail': serializers.CharField(
+                    default='Token is invalid or expired',
+                ),
+                'code': serializers.CharField(
+                    default='token_not_valid',
+                ),
+            },
+        ),
+    },
+}
 
 USER_SCHEMA = {
     'create': extend_schema(

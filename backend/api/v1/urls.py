@@ -2,12 +2,9 @@ from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.routers import DefaultRouter
 from rest_framework.viewsets import ModelViewSet
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView, TokenRefreshView,
-)
 
 from api.v1.serializers import CustomTokenObtainPairSerializer
-from api.v1.views import UserViewSet
+from api.v1.views import CustomTokenObtainPairView, CustomTokenRefreshView, UserViewSet
 
 router: DefaultRouter = DefaultRouter()
 
@@ -23,11 +20,11 @@ for route in ROUTER_DATA:
     )
 
 token_urls = [
-    path('create/', TokenObtainPairView.as_view(
+    path('create/', CustomTokenObtainPairView.as_view(
             serializer_class=CustomTokenObtainPairSerializer,
         ), name='token_obtain_pair'
     ),
-    path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),
 ]
 
 docs_urlpatterns = [
