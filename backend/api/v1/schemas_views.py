@@ -7,10 +7,35 @@ from drf_spectacular.utils import inline_serializer, extend_schema
 from user.validators import (
     PASS_ERROR, USER_FIRST_NAME_ERROR, USER_LAST_NAME_ERROR,
 )
-
 from api.v1.serializers import (
-    UserRegisterSerializer, TokenObtainPairSerializer,
+    NewsSerializer, TokenObtainPairSerializer, UserRegisterSerializer, 
 )
+
+DEFAULT_404: str = 'Страница не найдена.'
+
+NEWS_SCHEMA = {
+    'list': extend_schema(
+        description='Возвращает список новостей.',
+        summary='Получить список новостей.',
+        responses={
+            status.HTTP_200_OK: NewsSerializer,
+        },
+    ),
+    'retrieve': extend_schema(
+        description='Возвращает новость с указанным идентификатором.',
+        summary='Получить новость.',
+        responses={
+            status.HTTP_200_OK: NewsSerializer,
+            status.HTTP_404_NOT_FOUND: inline_serializer(
+                name='cleaning_types_retrieve_error_404',
+                fields={
+                    'detail': serializers.CharField(
+                        default=DEFAULT_404)
+                },
+            ),
+        },
+    ),
+}
 
 TOKEN_OBTAIN_SCHEMA: dict[str, str] = {
     'description': (
@@ -55,7 +80,7 @@ TOKEN_REFRESH_SCHEMA: dict[str, str] = {
     },
 }
 
-USER_SCHEMA = {
+USERS_SCHEMA = {
     'create': extend_schema(
         description='Создает нового пользователя.',
         summary='Создать нового пользователя.',
