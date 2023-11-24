@@ -1,4 +1,5 @@
 from django.urls import include, path
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.routers import DefaultRouter
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.views import (
@@ -29,7 +30,13 @@ token_urls = [
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
 
+docs_urlpatterns = [
+    path('schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('swagger/', SpectacularSwaggerView.as_view(), name='swagger'),
+]
+
 urlpatterns = [
     path('token/', include(token_urls)),
+    path('docs/', include(docs_urlpatterns)),
     path('', include(router.urls)),
 ]
