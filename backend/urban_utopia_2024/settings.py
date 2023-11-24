@@ -13,7 +13,7 @@ from urban_utopia_2024.app_data import (
 """App settings."""
 
 
-DEBUG = True
+DEBUG = False
 
 
 """Celery settings."""
@@ -30,10 +30,7 @@ CELERY_TASK_TIME_LIMIT = 10
 CELERY_TIMEZONE = 'Europe/Moscow'
 
 CELERY_BEAT_SCHEDULE = {
-    'print_hello': {
-        'task': 'api.tasks.print_hello',
-        'schedule': timedelta(seconds=CELERY_TASK_TIME_LIMIT),
-    },
+
 }
 
 
