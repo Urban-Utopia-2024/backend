@@ -196,6 +196,45 @@ class News(models.Model):
         return f'{self.category} ({self.pub_date})'
 
 
+class NewsComment(models.Model):
+    """Класс комментариев к новостям."""
+
+    author = models.ForeignKey(
+        verbose_name='Автор',
+        to=User,
+        related_name='comment',
+        on_delete=models.CASCADE,
+    )
+    news = models.ForeignKey(
+        verbose_name='Новость',
+        to=News,
+        related_name='comment',
+        on_delete=models.CASCADE,
+    )
+    text = models.CharField(
+        verbose_name='Комментарий',
+        max_length=NEWS_COMMENT_MAX_LEN,
+    )
+    pub_date = models.DateTimeField(
+        verbose_name='Дата и время публикации',
+        auto_now_add=True,
+    )
+
+    class Meta:
+        constraints = (
+            models.UniqueConstraint(
+                fields=('news', 'text', 'pub_date'),
+                name='unique_single_comment',
+            ),
+        )
+        ordering = ('pub_date',)
+        verbose_name = 'Комментарий новости'
+        verbose_name_plural = 'Комментарии новостей'
+
+    def __str__(self):
+        return f'{self.comment[:NEWS_COMMENT_SLICE]} ({self.news})'
+
+
 class NewsPicture(models.Model):
     """Класс картинок в новостях."""
 
@@ -223,39 +262,6 @@ class NewsPicture(models.Model):
 
     def __str__(self):
         return f'{self.picture} ({self.news})'
-
-
-class NewsComment(models.Model):
-    """Класс комментариев к новостям."""
-
-    news = models.ForeignKey(
-        verbose_name='Новость',
-        to=News,
-        related_name='comment',
-        on_delete=models.CASCADE,
-    )
-    comment = models.CharField(
-        verbose_name='Комментарий',
-        max_length=NEWS_COMMENT_MAX_LEN,
-    )
-    pub_date = models.DateTimeField(
-        verbose_name='Дата и время публикации',
-        auto_now_add=True,
-    )
-
-    class Meta:
-        constraints = (
-            models.UniqueConstraint(
-                fields=('news', 'comment', 'pub_date'),
-                name='unique_single_comment',
-            ),
-        )
-        ordering = ('pub_date',)
-        verbose_name = 'Комментарий новости'
-        verbose_name_plural = 'Комментарии новостей'
-
-    def __str__(self):
-        return f'{self.comment[:NEWS_COMMENT_SLICE]} ({self.news})'
 
 
 class Appeal(models.Model):

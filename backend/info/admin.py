@@ -234,34 +234,40 @@ class NewsCommentAdmin(admin.ModelAdmin):
     Атрибуты:
         - list_display (tuple) - список полей для отображения в интерфейсе:
             - ID комментария новости (id)
+            - ID автора (author)
             - ID новости (news)
-            - текст комментария (comment)
+            - текст комментария (text)
             - дата и время публикации (pub_date)
         - list_editable (tuple) - список полей для изменения в интерфейсе:
+            - ID автора (author)
             - ID новости (news)
-            - текст комментария (comment)
+            - текст комментария (text)
         - list_filter (tuple) - список фильтров:
+            - ID автора (author)
             - ID новости (news)
         - search_fields (tuple) - список полей для поиска объектов:
-            - текст комментария (comment)
+            - текст комментария (text)
             - дата и время публикации (pub_date)
         - list_per_page (int) - количество объектов на одной странице
     """
     list_display = (
         'id',
+        'author',
         'news',
-        'comment',
+        'text',
         'pub_date',
     )
     list_editable = (
+        'author',
         'news',
-        'comment',
+        'text',
     )
     list_filter = (
+        'author',
         'news',
     )
     search_fields = (
-        'comment',
+        'text',
         'pub_date',
     )
     list_per_page = ADMIN_LIST_PER_PAGE
