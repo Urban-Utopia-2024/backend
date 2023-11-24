@@ -13,7 +13,7 @@ from urban_utopia_2024.app_data import (
 """App settings."""
 
 
-DEBUG = False
+DEBUG = True
 
 
 """Celery settings."""
@@ -40,7 +40,7 @@ CELERY_BEAT_SCHEDULE = {
 """Django settings."""
 
 
-DATABASES = DATABASE_SQLITE if DEBUG else DATABASE_POSTGRESQL
+DATABASES = DATABASE_POSTGRESQL
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
