@@ -6,7 +6,7 @@ from corsheaders.defaults import default_headers
 from urban_utopia_2024.app_data import (
     BASE_DIR,
     DATABASE_SQLITE, DATABASE_POSTGRESQL,
-    SECRET_KEY,
+    CITE_DOMAIN, CITE_IP, SECRET_KEY,
 )
 
 
@@ -151,6 +151,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 ALLOWED_HOSTS = [
+    CITE_DOMAIN,
+    CITE_IP,
     'localhost',
     '127.0.0.1',
 ]
@@ -164,6 +166,14 @@ CORS_ALLOW_HEADERS = [
 
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:8000',
+    'http://127.0.0.1:8000',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:5173',
+    f'https://{CITE_DOMAIN}'
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    f'https://{CITE_DOMAIN}',
 ]
 
 MIDDLEWARE = [
