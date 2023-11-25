@@ -15,11 +15,11 @@
 ################################# TOKENS #################################
 ##########################################################################
 
-@admin_access = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzAwODQ5OTMwLCJpYXQiOjE3MDA4NDk2MzAsImp0aSI6IjMzNDY2YTA1MzY0NzQwZmNiNmY0YTI5NWZlYmYwNGUyIiwidXNlcl9pZCI6MSwiaXNfc3RhZmYiOnRydWV9.Uo8FTqsJlCBy7Zfz5l-Jdvat1gkyVI16aNO_d49ZmU0
-@admin_refresh = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwMDkzNjAzMCwiaWF0IjoxNzAwODQ5NjMwLCJqdGkiOiJhNTU1YjNkMDI2YWU0ZDdlOTk4YjI3MmQ5ZDJkOTNhMSIsInVzZXJfaWQiOjEsImlzX3N0YWZmIjp0cnVlfQ.yKdR4gUxI9dAG4ysH_PI_nUCuSTurOCTjuAd2gL-jqg
+@admin_access = admin_toke_access
+@admin_refresh = admin_toke_refresh
 
-@ivan_access = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzAwODUzMzk0LCJpYXQiOjE3MDA4NTMwOTQsImp0aSI6IjQxZDE2ZmFiM2ViZjQ0Yzg5MGJmNjJlYWE0MWRjMzU5IiwidXNlcl9pZCI6M30.uy3ruMbLdaKJec1FDTkQTKuIKKVwnxEtme5ajwcjYp8
-@ivan_refresh = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwMDkzOTQ5NCwiaWF0IjoxNzAwODUzMDk0LCJqdGkiOiI0NDkyNzFhZGY3MDk0ZDEzOWI0YjJkMzQ1M2ViOGZiMCIsInVzZXJfaWQiOjN9.JZfjjWG6LHOywgxap5ecDYteaAwW9zer3k2OufgqHPU
+@ivan_access = ivan_toke_access
+@ivan_refresh = ivan_toke_refresh
 
 
 ###
@@ -71,7 +71,7 @@ POST {{auth}}refresh/ HTTP/1.1
 Content-Type: application/json
 
 {
-  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzAwOTA5NjA5LCJpYXQiOjE3MDA5MDkzMDksImp0aSI6ImIwN2E0YmU2Yjg2ODQ0MTY4Y2VmMzFlNTAwNDliNjdlIiwidXNlcl9pZCI6M30.rrY0JbMaH3q7LRTMZhUW1cwmgjoOvZZ2X1VNT2Jg6Aw"
+  "refresh": "admin_toke_refresh"
 }
 
 
@@ -82,7 +82,8 @@ Content-Type: application/json
 ###
 POST {{appeals}} HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzAxMDQyOTQzLCJpYXQiOjE3MDA5MTMzNDMsImp0aSI6IjI5OGY2NTIxOTJmYzRiZTQ5ODc2OTI3ODU3OThlZGZhIiwidXNlcl9pZCI6M30.Ra55md6_ENgEDNCN1tbgb-WChLFQFBzbT9DHfWABkRA
+Authorization: Bearer admin_access
+# Authorization: Bearer ivan_access
 
 {
   
@@ -107,7 +108,10 @@ Content-Type: application/json
 
 ###
 GET {{users}} HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzAwOTAyODM2LCJpYXQiOjE3MDA5MDI1MzYsImp0aSI6ImE5N2M1YzRlYjBlZjQwYTdiOTdhZjU0NDlkMzY1MzNmIiwidXNlcl9pZCI6MSwiaXNfc3RhZmYiOnRydWV9.WLpzWcIXyC-ncPy7unLdn8eCSqJQ6MxydRZyQjRycqs
+Authorization: Bearer admin_access
+# Authorization: Bearer ivan_access
 
 ###
 GET {{users}}1/ HTTP/1.1
+Authorization: Bearer admin_access
+# Authorization: Bearer ivan_access
