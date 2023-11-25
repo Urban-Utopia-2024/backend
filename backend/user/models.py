@@ -57,8 +57,6 @@ class Address(models.Model):
                 'Укажите корректный подъезд.',
             ),
         ),
-        null=True,
-        blank=True,
     )
     floor = models.PositiveSmallIntegerField(
         verbose_name='Этаж',
@@ -68,8 +66,6 @@ class Address(models.Model):
                 'Укажите корректный этаж.',
             ),
         ),
-        null=True,
-        blank=True,
     )
     apartment = models.PositiveSmallIntegerField(
         verbose_name='Квартира',
@@ -79,8 +75,6 @@ class Address(models.Model):
                 'Укажите корректный номер квартиры.',
             ),
         ),
-        null=True,
-        blank=True,
     )
     # INFO: данные полей 'index', 'latitude' и 'longitude'
     #       должны заполняться автоматически в методе save(),
