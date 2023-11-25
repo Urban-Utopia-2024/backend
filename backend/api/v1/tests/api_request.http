@@ -91,6 +91,7 @@ Content-Type: application/json
 
 ###
 GET {{users}} HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzAwOTAyODM2LCJpYXQiOjE3MDA5MDI1MzYsImp0aSI6ImE5N2M1YzRlYjBlZjQwYTdiOTdhZjU0NDlkMzY1MzNmIiwidXNlcl9pZCI6MSwiaXNfc3RhZmYiOnRydWV9.WLpzWcIXyC-ncPy7unLdn8eCSqJQ6MxydRZyQjRycqs
 
 ###
 GET {{users}}1/ HTTP/1.1
