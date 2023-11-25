@@ -7,6 +7,8 @@
 
 @auth = http://127.0.0.1:8000/api/v1/token/
 
+@news = http://127.0.0.1:8000/api/v1/news/
+
 @users = http://127.0.0.1:8000/api/v1/users/
 
 
@@ -15,11 +17,11 @@
 ################################# TOKENS #################################
 ##########################################################################
 
-@admin_access = admin_toke_access
-@admin_refresh = admin_toke_refresh
+@admin_access = admin_token_access
+@admin_refresh = admin_token_refresh
 
-@ivan_access = ivan_toke_access
-@ivan_refresh = ivan_toke_refresh
+@ivan_access =  ivan_token_access
+@ivan_refresh = ivan_token_refresh
 
 
 ###
@@ -76,14 +78,50 @@ Content-Type: application/json
 
 
 ##########################################################################
+################################## NEWS ##################################
+##########################################################################
+
+###
+POST {{news}} HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer admin_token_access
+# Authorization: Bearer ivan_token_access
+
+{
+  "category": "Water",
+  "text": "У нас важные новости (1)!",
+  "address": {
+    "city": "Екатеринбург",
+    "district": "Центральный",
+    "street": "Ростовская",
+    "house": 12,
+    "building": "1С",
+    "entrance": 2,
+    "floor": 11,
+    "apartment": 11,
+    "index": 199234,
+    "latitude": 10.1234,
+    "longitude": 11.1
+  },
+  "quiz": {
+    "title": "Опрос №1",
+    "answers": [
+      "Ответ №1",
+      "Ответ №2"
+    ]
+  }
+}
+
+
+##########################################################################
 ################################# APPEAL ##################################
 ##########################################################################
 
 ###
 POST {{appeals}} HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer admin_access
-# Authorization: Bearer ivan_access
+Authorization: Bearer admin_token_access
+# Authorization: Bearer ivan_token_access
 
 {
   
@@ -108,15 +146,15 @@ Content-Type: application/json
 
 ###
 GET {{users}} HTTP/1.1
-Authorization: Bearer admin_access
-# Authorization: Bearer ivan_access
+Authorization: Bearer admin_token_access
+# Authorization: Bearer ivan_token_access
 
 ###
 GET {{users}}?is_municipal=true HTTP/1.1
-Authorization: Bearer admin_access
-# Authorization: Bearer ivan_access
+Authorization: Bearer admin_token_access
+# Authorization: Bearer ivan_token_access
 
 ###
 GET {{users}}1/ HTTP/1.1
-Authorization: Bearer admin_access
-# Authorization: Bearer ivan_access
+Authorization: Bearer admin_token_access
+# Authorization: Bearer ivan_token_access
