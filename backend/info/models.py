@@ -14,6 +14,25 @@ from urban_utopia_2024.app_data import (
 from user.models import Address, User
 
 
+class ServiceCategory(models.Model):
+    """Модель категорий услуг."""
+
+    name = models.CharField(
+        verbose_name='Название',
+        max_length=NEWS_CATEGORY_MAX_LEN,
+        choices=NEWS_CATEGORY_CHOICES,
+        unique=True,
+    )
+
+    class Meta:
+        ordering = ('id',)
+        verbose_name = 'Категория новостей'
+        verbose_name_plural = 'Категории новостей'
+
+    def __str__(self):
+        return self.name
+
+
 class Task(models.Model):
     """Модель плановых работ."""
 
@@ -137,31 +156,20 @@ class AnswerUser(models.Model):
         return f'{self.user}: {self.answer[:QUIZ_ANSWER_SLICE]}'
 
 
-class NewsCategory(models.Model):
-    """Модель категорий новостей."""
-
-    name = models.CharField(
-        verbose_name='Название',
-        max_length=NEWS_CATEGORY_MAX_LEN,
-        choices=NEWS_CATEGORY_CHOICES,
-        unique=True,
-    )
-
-    class Meta:
-        ordering = ('id',)
-        verbose_name = 'Категория новостей'
-        verbose_name_plural = 'Категории новостей'
-
-    def __str__(self):
-        return self.name
-
-
 class News(models.Model):
     """Модель новостей."""
 
+    municipal = models.ForeignKey(
+        verbose_name='Муниципальная служба',
+        to=User,
+        related_name='news',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
     category = models.ForeignKey(
         verbose_name='Категория',
-        to=NewsCategory,
+        to=ServiceCategory,
         related_name='news',
         on_delete=models.PROTECT,
     )
@@ -185,6 +193,9 @@ class News(models.Model):
         to=Quiz,
         related_name='news',
         on_delete=models.PROTECT,
+        default=None,
+        blank=True,
+        null=True,
     )
 
     class Meta:
