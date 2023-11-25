@@ -82,25 +82,10 @@ Content-Type: application/json
 ###
 POST {{appeals}} HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzAxMDQyMDQ3LCJpYXQiOjE3MDA5MTI0NDcsImp0aSI6ImFiMzJjODEyNDUxYzRiODM5NDM5NjdlNDlhNWM4N2EzIiwidXNlcl9pZCI6M30.CuTqZx-VibuWZ2OKdF5c0Pkg39eazeONxpHx-s364Z0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzAxMDQyOTQzLCJpYXQiOjE3MDA5MTMzNDMsImp0aSI6IjI5OGY2NTIxOTJmYzRiZTQ5ODc2OTI3ODU3OThlZGZhIiwidXNlcl9pZCI6M30.Ra55md6_ENgEDNCN1tbgb-WChLFQFBzbT9DHfWABkRA
 
 {
-  "municipal_id": 4,
-  "topic": "Тестовый топик",
-  "text": "Тестовое обращение",
-  "address": {
-    "city": "Екатеринбург",
-    "district": "Центральный",
-    "street": "Кирочная",
-    "house": 4,
-    "building": "1А",
-    "entrance": 2,
-    "floor": 2,
-    "apartment": 665,
-    "index": 192284,
-    "latitude": 10.01,
-    "longitude": 11.02
-  }
+  
 }
 
 

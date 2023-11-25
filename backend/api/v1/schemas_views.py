@@ -8,9 +8,12 @@ from user.validators import (
     PASS_ERROR, USER_FIRST_NAME_ERROR, USER_LAST_NAME_ERROR,
 )
 from api.v1.serializers import (
-    AppealAdminSerializer, NewsSerializer, UserFullSerializer, UserRegisterSerializer,
+    AppealAdminSerializer, AppealAnswerSerializer, AppealRatingSerializer,
+    AppealUserSerializer, AppealUserPostSerializer, NewsSerializer,
+    UserFullSerializer, UserRegisterSerializer,
 )
 
+DEFAULT_400_REQUIRED: str = 'Обязательное поле.'
 DEFAULT_401: str = 'Учетные данные не были предоставлены.'
 DEFAULT_404: str = 'Страница не найдена.'
 
@@ -45,11 +48,88 @@ APPEAL_SCHEMA = {
             ),
         },
     ),
+    'create': extend_schema(
+        description='Создает обращение.',
+        summary='Создать обращение.',
+        request=AppealUserPostSerializer,
+        responses={
+            status.HTTP_201_CREATED: AppealUserSerializer,
+            status.HTTP_400_BAD_REQUEST: inline_serializer(
+                name='appeals_create_error_400',
+                fields={
+                    'municipal_id': serializers.CharField(
+                        default=DEFAULT_400_REQUIRED,
+                    ),
+                    'topic': serializers.CharField(
+                        default=DEFAULT_400_REQUIRED,
+                    ),
+                    'text': serializers.CharField(
+                        default=DEFAULT_400_REQUIRED,
+                    ),
+                    'address': serializers.CharField(
+                        default=DEFAULT_400_REQUIRED,
+                    ),
+                },
+            ),
+            status.HTTP_401_UNAUTHORIZED: inline_serializer(
+                name='appeals_create_error_401',
+                fields={
+                    'detail': serializers.CharField(
+                        default=DEFAULT_401,
+                    ),
+                },
+            ),
+        },
+    ),
+    'post_answer': extend_schema(
+        description=(
+            'Оставляет ответ обращению с указанным идентификатором.'
+        ),
+        summary='Оставить ответ обращению.',
+        request=AppealAnswerSerializer,
+        responses={
+            status.HTTP_200_OK: inline_serializer(
+                name='appeals_post_answer_200',
+                fields={
+                    'rating': serializers.CharField(
+                        default='Ответ обращению оставлен.',
+                    ),
+                },
+            ),
+            status.HTTP_400_BAD_REQUEST: inline_serializer(
+                name='appeals_post_answer_error_403',
+                fields={
+                    'detail': serializers.CharField(
+                        default=(
+                            'Вы уже дали официальный ответ обращению.'
+                        ),
+                    ),
+                },
+            ),
+            status.HTTP_401_UNAUTHORIZED: inline_serializer(
+                name='appeals_post_answer_error_400',
+                fields={
+                    'detail': serializers.CharField(
+                        default=DEFAULT_401,
+                    ),
+                },
+            ),
+            status.HTTP_404_NOT_FOUND: inline_serializer(
+                name='appeals_post_answer_error_404',
+                fields={
+                    'detail': serializers.CharField(
+                        default=DEFAULT_404
+                    ),
+                },
+            ),
+        },
+    ),
     'rate_answer': extend_schema(
         description=(
             'Оставляет оценку ответа обращения с указанным идентификатором.'
         ),
         summary='Оценить ответ обращения.',
+        request=AppealRatingSerializer,
         responses={
             status.HTTP_200_OK: inline_serializer(
                 name='appeals_rate_answer_200',

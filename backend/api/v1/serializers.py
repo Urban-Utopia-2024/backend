@@ -26,6 +26,17 @@ class AddressSerializer(serializers.ModelSerializer):
             'longitude',
         )
 
+
+class AppealAnswerSerializer(serializers.ModelSerializer):
+    """Сериализатор проверки ответа обращения."""
+
+    class Meta:
+        model = Appeal
+        fields = (
+            'answer',
+        )
+
+
 class AppealRatingSerializer(serializers.ModelSerializer):
     """Сериализатор проверки оценки обращения."""
 
@@ -111,7 +122,7 @@ class MunicipalSerializer(serializers.ModelSerializer):
 class AppealAdminSerializer(serializers.ModelSerializer):
     """
     Сериализатор представления обращения граждан.
-    
+
     Используется для отображения информации администратору портала.
     """
 
@@ -138,7 +149,7 @@ class AppealAdminSerializer(serializers.ModelSerializer):
 class AppealMunicipalSerializer(serializers.ModelSerializer):
     """
     Сериализатор представления обращения граждан.
-    
+
     Используется для отображения информации муниципальной службе.
     """
 
@@ -163,7 +174,7 @@ class AppealMunicipalSerializer(serializers.ModelSerializer):
 class AppealUserSerializer(serializers.ModelSerializer):
     """
     Сериализатор представления обращения граждан.
-    
+
     Используется для отображения информации пользователю.
     """
 
@@ -183,6 +194,41 @@ class AppealUserSerializer(serializers.ModelSerializer):
             'status',
             'rating',
         )
+
+
+class AppealUserPostSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор представления обращения граждан.
+
+    Используется для отображения информации пользователю.
+    """
+
+    address = AddressSerializer()
+    municipal_id = serializers.IntegerField()
+
+    class Meta:
+        model = Appeal
+        fields = (
+            'municipal_id',
+            'topic',
+            'text',
+            'address',
+        )
+
+    def create(self, validated_data):
+        address, _ = Address.objects.get_or_create(
+            **validated_data.get('address')
+        )
+        user: User = User.objects.get(id=self.context.get('user_id'))
+        municipal: User = User.objects.get(id=validated_data.get('municipal_id'))  # noqa (E501)
+        appeal: Appeal = Appeal.objects.create(
+            user=user,
+            municipal=municipal,
+            topic=validated_data.get('topic'),
+            text=validated_data.get('text'),
+            address=address,
+        )
+        return appeal
 
 
 class UserShortSerializer(serializers.ModelSerializer):

@@ -9,13 +9,15 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView, TokenRefreshView,
 )
 
+from api.v1.permissions import IsMunicipal
 from api.v1.serializers import (
-    AppealAdminSerializer, AppealMunicipalSerializer, AppealUserSerializer,
-    AppealRatingSerializer, NewsSerializer,
-    UserFullSerializer, UserRegisterSerializer,
+    AppealAdminSerializer, AppealAnswerSerializer, AppealMunicipalSerializer,
+    AppealRatingSerializer, AppealUserSerializer, AppealUserPostSerializer,
+    NewsSerializer, UserFullSerializer, UserRegisterSerializer,
 )
 from api.v1.schemas_views import (
-    APPEAL_SCHEMA, NEWS_SCHEMA, TOKEN_OBTAIN_SCHEMA, TOKEN_REFRESH_SCHEMA, USERS_SCHEMA,
+    APPEAL_SCHEMA, NEWS_SCHEMA, TOKEN_OBTAIN_SCHEMA,
+    TOKEN_REFRESH_SCHEMA, USERS_SCHEMA,
 )
 from info.models import Appeal, News
 from urban_utopia_2024.app_data import APPEAL_STAGE_COMPLETED
@@ -34,6 +36,8 @@ class AppealViewSet(ModelViewSet):
             return AppealAdminSerializer
         if self.request.user.is_municipal:
             return AppealMunicipalSerializer
+        if self.request.method == 'POST':
+            return AppealUserPostSerializer
         return AppealUserSerializer
 
     def get_queryset(self):
@@ -43,7 +47,54 @@ class AppealViewSet(ModelViewSet):
             return Appeal.objects.filter(municipal=self.request.user)
         return Appeal.objects.filter(user=self.request.user)
 
-    
+    def create(self, request, *args, **kwargs):
+        serializer: serializers = self.get_serializer(
+            data=request.data,
+            context={'user_id': request.user.id}
+        )
+        serializer.is_valid(raise_exception=True)
+        appeal_instance: Appeal = serializer.save()
+        response_serializer: serializers = AppealUserSerializer(
+            instance=appeal_instance
+        )
+        return Response(
+            data=response_serializer.data,
+            status=status.HTTP_201_CREATED
+        )
+
+    @action(
+        detail=True,
+        methods=('post',),
+        url_path='post_answer',
+        permission_classes=(IsMunicipal,),
+    )
+    def post_answer(self, request, pk):
+        """Позволяет давать ответ обращению"""
+        appeal: Appeal = get_object_or_404(
+            Appeal,
+            id=pk,
+            municipal=self.request.user,
+        )
+        if appeal.answer is not None:
+            return Response(
+                data={
+                    'detail': (
+                        'Вы уже дали официальный ответ обращению.'
+                    )
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        serializer: serializers = AppealAnswerSerializer(
+            data=request.data
+        )
+        serializer.is_valid(raise_exception=True)
+        appeal.answer: float = serializer.validated_data.get('answer')
+        appeal.status: str = APPEAL_STAGE_COMPLETED
+        return Response(
+            data={'answer': 'Ответ обращению оставлен.'},
+            status=status.HTTP_200_OK,
+        )
+
     @action(
         detail=True,
         methods=('post',),
@@ -74,6 +125,7 @@ class AppealViewSet(ModelViewSet):
             data={'rating': 'Благодарим за оценку ответа!'},
             status=status.HTTP_200_OK,
         )
+
 
 @extend_schema(**TOKEN_OBTAIN_SCHEMA)
 class CustomTokenObtainPairView(TokenObtainPairView):
