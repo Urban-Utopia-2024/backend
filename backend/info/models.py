@@ -270,9 +270,15 @@ class Appeal(models.Model):
     user = models.ForeignKey(
         verbose_name='Гражданин',
         to=User,
-        related_name='appeal',
+        related_name='appeal_from',
         on_delete=models.SET_NULL,
         null=True,
+    )
+    municipal = models.ForeignKey(
+        verbose_name='Муниципальная служба',
+        to=User,
+        related_name='appeal_to',
+        on_delete=models.PROTECT,
     )
     topic = models.CharField(
         verbose_name='Тема',

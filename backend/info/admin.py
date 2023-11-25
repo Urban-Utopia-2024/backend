@@ -83,6 +83,7 @@ class AppealAdmin(admin.ModelAdmin):
         - list_display (tuple) - список полей для отображения в интерфейсе:
             - ID обращения (id)
             - ID пользователя (user)
+            - ID муниципальной службы (municipal)
             - тема обращения (topic)
             - текст обращения (text)
             - дата и время обращения (pub_date)
@@ -92,6 +93,7 @@ class AppealAdmin(admin.ModelAdmin):
             - рейтинг ответа обращения (rating)
         - list_editable (tuple) - список полей для изменения в интерфейсе:
             - ID пользователя (user)
+            - ID муниципальной службы (municipal)
             - тема обращения (topic)
             - текст обращения (text)
             - ID адреса (address)
@@ -100,6 +102,7 @@ class AppealAdmin(admin.ModelAdmin):
             - рейтинг ответа обращения (rating)
         - list_filter (tuple) - список фильтров:
             - ID пользователя (user)
+            - ID муниципальной службы (municipal)
             - ID адреса (address)
             - статус обращения (status)
             - рейтинг ответа обращения (rating)
@@ -113,6 +116,7 @@ class AppealAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'user',
+        'municipal',
         'topic',
         'text',
         'pub_date',
@@ -123,6 +127,7 @@ class AppealAdmin(admin.ModelAdmin):
     )
     list_editable = (
         'user',
+        'municipal',
         'topic',
         'text',
         'address',
@@ -132,6 +137,7 @@ class AppealAdmin(admin.ModelAdmin):
     )
     list_filter = (
         'user',
+        'municipal',
         'address',
         'status',
         'rating',
