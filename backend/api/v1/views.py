@@ -171,3 +171,19 @@ class UserViewSet(ModelViewSet):
         if self.request.method == 'GET':
             self.permission_classes = [IsAdminUser,]
         return super().get_permissions()
+
+    def get_queryset(self):
+        is_municipal: str = self.request.query_params.get('is_municipal')
+        if is_municipal == 'true':
+            return User.objects.select_related(
+                'address',
+            ).filter(
+                is_staff=False,
+                is_municipal=True,
+            )
+        return User.objects.select_related(
+            'address',
+        ).filter(
+            is_staff=False,
+            is_municipal=False,
+        )

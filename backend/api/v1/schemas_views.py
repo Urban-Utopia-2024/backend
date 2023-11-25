@@ -2,7 +2,7 @@ from rest_framework import status, serializers
 from rest_framework_simplejwt.serializers import (
     TokenObtainPairSerializer, TokenRefreshSerializer,
 )
-from drf_spectacular.utils import inline_serializer, extend_schema
+from drf_spectacular.utils import inline_serializer, extend_schema, OpenApiParameter
 
 from user.validators import (
     PASS_ERROR, USER_FIRST_NAME_ERROR, USER_LAST_NAME_ERROR,
@@ -15,6 +15,7 @@ from api.v1.serializers import (
 
 DEFAULT_400_REQUIRED: str = 'Обязательное поле.'
 DEFAULT_401: str = 'Учетные данные не были предоставлены.'
+DEFAULT_403: str = 'У вас недостаточно прав для выполнения данного действия.'
 DEFAULT_404: str = 'Страница не найдена.'
 
 APPEAL_SCHEMA = {
@@ -96,21 +97,21 @@ APPEAL_SCHEMA = {
                     ),
                 },
             ),
-            status.HTTP_400_BAD_REQUEST: inline_serializer(
+            status.HTTP_401_UNAUTHORIZED: inline_serializer(
+                name='appeals_post_answer_error_400',
+                fields={
+                    'detail': serializers.CharField(
+                        default=DEFAULT_401,
+                    ),
+                },
+            ),
+            status.HTTP_403_FORBIDDEN: inline_serializer(
                 name='appeals_post_answer_error_403',
                 fields={
                     'detail': serializers.CharField(
                         default=(
                             'Вы уже дали официальный ответ обращению.'
                         ),
-                    ),
-                },
-            ),
-            status.HTTP_401_UNAUTHORIZED: inline_serializer(
-                name='appeals_post_answer_error_400',
-                fields={
-                    'detail': serializers.CharField(
-                        default=DEFAULT_401,
                     ),
                 },
             ),
@@ -274,6 +275,15 @@ USERS_SCHEMA = {
     'list': extend_schema(
         description='Возвращает список пользователей.',
         summary='Получить список пользователей.',
+        parameters=[
+            OpenApiParameter(
+                name='is_municipal',
+                location=OpenApiParameter.QUERY,
+                description='Статус муниципального учреждения.',
+                required=False,
+                type=bool,
+            ),
+        ],
         responses={
             status.HTTP_200_OK: UserFullSerializer,
             status.HTTP_401_UNAUTHORIZED: inline_serializer(
@@ -281,6 +291,14 @@ USERS_SCHEMA = {
                 fields={
                     'detail': serializers.CharField(
                         default=DEFAULT_401,
+                    ),
+                },
+            ),
+            status.HTTP_403_FORBIDDEN: inline_serializer(
+                name='users_retrieve_error_403',
+                fields={
+                    'detail': serializers.CharField(
+                        default=DEFAULT_403,
                     ),
                 },
             ),
@@ -296,6 +314,14 @@ USERS_SCHEMA = {
                 fields={
                     'detail': serializers.CharField(
                         default=DEFAULT_401,
+                    ),
+                },
+            ),
+            status.HTTP_403_FORBIDDEN: inline_serializer(
+                name='users_retrieve_error_403',
+                fields={
+                    'detail': serializers.CharField(
+                        default=DEFAULT_403,
                     ),
                 },
             ),
