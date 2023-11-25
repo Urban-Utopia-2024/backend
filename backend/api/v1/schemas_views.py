@@ -248,7 +248,7 @@ NEWS_SCHEMA = {
     ),
 }
 
-TOKEN_OBTAIN_SCHEMA: dict[str, str] = {
+TOKEN_JWT_OBTAIN_SCHEMA: dict[str, str] = {
     'description': (
         'Принимает набор учетных данных пользователя и возвращает '
         'пару JWT-токенов доступа и обновления.'
@@ -269,7 +269,7 @@ TOKEN_OBTAIN_SCHEMA: dict[str, str] = {
     },
 }
 
-TOKEN_REFRESH_SCHEMA: dict[str, str] = {
+TOKEN_JWT_REFRESH_SCHEMA: dict[str, str] = {
     'description': (
         'Принимает JWT-токен обновления и возвращает JWT-токен доступа, '
         'если токен обновления действителен.'

@@ -20,8 +20,8 @@ from api.v1.serializers import (
     UserFullSerializer, UserRegisterSerializer,
 )
 from api.v1.schemas_views import (
-    APPEAL_SCHEMA, DEFAULT_400_REQUIRED, NEWS_SCHEMA, TOKEN_OBTAIN_SCHEMA,
-    TOKEN_REFRESH_SCHEMA, USERS_SCHEMA,
+    APPEAL_SCHEMA, DEFAULT_400_REQUIRED, NEWS_SCHEMA,
+    TOKEN_JWT_OBTAIN_SCHEMA, TOKEN_JWT_REFRESH_SCHEMA, USERS_SCHEMA,
 )
 from info.models import Appeal, News, NewsComment
 from urban_utopia_2024.app_data import APPEAL_STAGE_COMPLETED
@@ -29,6 +29,7 @@ from user.models import User
 
 
 class CustomAuthToken(ObtainAuthToken):
+    """Авторизовывает пользователя и выдает TokenAuthentication."""
 
     def post(self, request, *args, **kwargs):
         email: str = request.data.get('email')
@@ -42,7 +43,7 @@ class CustomAuthToken(ObtainAuthToken):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         user: User = authenticate(email=email, password=password)
-        if not User:
+        if not user:
             return Response(
                 data={
                     'detail': 'Указаны неверные email или password.'
@@ -166,13 +167,13 @@ class AppealViewSet(ModelViewSet):
         )
 
 
-@extend_schema(**TOKEN_OBTAIN_SCHEMA)
+@extend_schema(**TOKEN_JWT_OBTAIN_SCHEMA)
 class CustomTokenObtainPairView(TokenObtainPairView):
     """Используется для обновления swagger к эндпоинту получения токенов."""
     pass
 
 
-@extend_schema(**TOKEN_REFRESH_SCHEMA)
+@extend_schema(**TOKEN_JWT_REFRESH_SCHEMA)
 class CustomTokenRefreshView(TokenRefreshView):
     """Используется для обновления swagger к эндпоинту обновления токена."""
     pass
