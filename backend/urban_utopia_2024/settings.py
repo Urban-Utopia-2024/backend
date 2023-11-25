@@ -186,6 +186,11 @@ MIDDLEWARE = [
 
 SECRET_KEY = SECRET_KEY
 
+if DEBUG:
+    SIMPLE_JWT = {
+        "ACCESS_TOKEN_LIFETIME": timedelta(hours=36),
+    }
+
 
 """User data."""
 
