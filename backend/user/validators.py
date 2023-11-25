@@ -3,11 +3,11 @@ import re
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext
 
-BUILDING_PATTERN: str = r'^\d{1,4}[А-Я]{1}$'
+BUILDING_PATTERN: str = r'^\d{1,4}[А-Я]{0,1}$'
 BUILDING_ERROR: str = gettext(
-    'Введите корректный номер корпуса вида 112А.'
+    'Введите корректный номер корпуса вида 123 или 123А.'
 )
-EMAIL_PATTERN: str = r'^(?!\.)[0-9A-Za-z\.]{5,50}@[a-zA-z]+\.[a-zA-z]+$'
+EMAIL_PATTERN: str = r'^(?!\.)[0-9A-Za-z\.]{1,50}@[a-zA-z]+\.[a-zA-z]+$'
 EMAIL_ERROR: str = gettext(
     'Введите корректный email (например: example@example.ru)'
 )
@@ -19,7 +19,7 @@ LON_ERR: str = gettext(
     'Укажите корректные координаты долготы вида XX.XXXXXX.'
 )
 PASS_PATTERN: str = (
-    r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!_@#$%^&+=]).{5,50}$'
+    r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!_@#$%^&+=]).{5,512}$'
 )
 PASS_ERROR: str = gettext(
     'Введите пароль, который удовлетворяет критериям: '
