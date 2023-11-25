@@ -2,14 +2,18 @@ from rest_framework import status, serializers
 from rest_framework_simplejwt.serializers import (
     TokenObtainPairSerializer, TokenRefreshSerializer,
 )
-from drf_spectacular.utils import inline_serializer, extend_schema, OpenApiParameter
+from drf_spectacular.utils import (
+    OpenApiParameter,
+    inline_serializer, extend_schema,
+)
 
 from user.validators import (
     PASS_ERROR, USER_FIRST_NAME_ERROR, USER_LAST_NAME_ERROR,
 )
 from api.v1.serializers import (
     AppealAdminSerializer, AppealAnswerSerializer, AppealRatingSerializer,
-    AppealUserSerializer, AppealUserPostSerializer, NewsSerializer,
+    AppealUserSerializer, AppealUserPostSerializer,
+    NewsSerializer, NewsPostSerializer,
     UserFullSerializer, UserRegisterSerializer,
 )
 
@@ -189,6 +193,54 @@ NEWS_SCHEMA = {
                 fields={
                     'detail': serializers.CharField(
                         default=DEFAULT_404
+                    ),
+                },
+            ),
+        },
+    ),
+    'create': extend_schema(
+        description='Создает новость.',
+        summary='Создать новость.',
+        request=NewsPostSerializer,
+        responses={
+            status.HTTP_201_CREATED: NewsSerializer,
+            status.HTTP_400_BAD_REQUEST: inline_serializer(
+                name='news_create_error_400',
+                fields={
+                    'category': serializers.CharField(
+                        default=DEFAULT_400_REQUIRED,
+                    ),
+                    'text': serializers.CharField(
+                        default=DEFAULT_400_REQUIRED,
+                    ),
+                    'address': serializers.CharField(
+                        default=DEFAULT_400_REQUIRED,
+                    ),
+                    'quiz': serializers.CharField(
+                        default={
+                            'answers': {
+                                'answers': (
+                                    'В опросе не может быть менее 2 '
+                                    'вариантов ответа.'
+                                )
+                            },
+                        },
+                    ),
+                },
+            ),
+            status.HTTP_401_UNAUTHORIZED: inline_serializer(
+                name='news_post_error_401',
+                fields={
+                    'detail': serializers.CharField(
+                        default=DEFAULT_401,
+                    ),
+                },
+            ),
+            status.HTTP_403_FORBIDDEN: inline_serializer(
+                name='news_post_error_403',
+                fields={
+                    'detail': serializers.CharField(
+                        default=DEFAULT_403,
                     ),
                 },
             ),

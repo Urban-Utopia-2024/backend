@@ -13,13 +13,14 @@ from api.v1.permissions import IsMunicipal
 from api.v1.serializers import (
     AppealAdminSerializer, AppealAnswerSerializer, AppealMunicipalSerializer,
     AppealRatingSerializer, AppealUserSerializer, AppealUserPostSerializer,
-    NewsSerializer, UserFullSerializer, UserRegisterSerializer,
+    NewsSerializer, NewsCommentSerializer, NewsPostSerializer,
+    UserFullSerializer, UserRegisterSerializer,
 )
 from api.v1.schemas_views import (
     APPEAL_SCHEMA, NEWS_SCHEMA, TOKEN_OBTAIN_SCHEMA,
     TOKEN_REFRESH_SCHEMA, USERS_SCHEMA,
 )
-from info.models import Appeal, News
+from info.models import Appeal, News, NewsComment
 from urban_utopia_2024.app_data import APPEAL_STAGE_COMPLETED
 from user.models import User
 
@@ -69,7 +70,7 @@ class AppealViewSet(ModelViewSet):
         permission_classes=(IsMunicipal,),
     )
     def post_answer(self, request, pk):
-        """Позволяет давать ответ обращению"""
+        """Оставить ответ обращению."""
         appeal: Appeal = get_object_or_404(
             Appeal,
             id=pk,
@@ -102,7 +103,7 @@ class AppealViewSet(ModelViewSet):
         permission_classes=(IsAuthenticated,),
     )
     def rate_answer(self, request, pk):
-        """Позволяет ставить оценку обращению."""
+        """Оставить оценку ответу обращения."""
         appeal: Appeal = get_object_or_404(
             Appeal, id=pk, user=self.request.user
         )
@@ -143,7 +144,7 @@ class CustomTokenRefreshView(TokenRefreshView):
 class NewsViewSet(ModelViewSet):
     """ViewSet для взаимодействия с моделью новостей."""
 
-    http_method_names = ('get',)
+    http_method_names = ('get', 'post',)
     queryset = News.objects.select_related(
         'category',
         'address',
@@ -152,7 +153,54 @@ class NewsViewSet(ModelViewSet):
         'picture',
         'comment',
     ).all()
-    serializer_class = NewsSerializer
+
+    def get_permissions(self):
+        if self.action == 'add_comment':
+            self.permission_classes = [IsAuthenticated,]
+        elif self.request.method == 'POST':
+            self.permission_classes = [IsMunicipal,]
+        return super().get_permissions()
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return NewsPostSerializer
+        return NewsSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer: serializers = self.get_serializer(
+            data=request.data,
+            context={'municipal_id': request.user.id},
+        )
+        serializer.is_valid(raise_exception=True)
+        news_instance: News = serializer.save()
+        response_serializer: serializers = NewsSerializer(
+            instance=news_instance
+        )
+        return Response(
+            data=response_serializer.data,
+            status=status.HTTP_201_CREATED
+        )
+
+    @action(
+        methods=('post',),
+        detail=True,
+        url_name='add_comment',
+        permission_classes=(IsAuthenticated,),
+    )
+    def add_comment(self, request, pk):
+        """Оставить комментарий к новости."""
+        news: News = get_object_or_404(News, id=pk)
+        serializer: serializers = NewsCommentSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        NewsComment.objects.create(
+            author=request.user,
+            news=news,
+            text=serializer.validated_data.get('text'),
+        )
+        return Response(
+            data={'comment': 'Ваш комментарий опубликован!'},
+            status=status.HTTP_201_CREATED,
+        )
 
 
 @extend_schema_view(**USERS_SCHEMA)

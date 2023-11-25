@@ -1,8 +1,12 @@
+from django.db import transaction
 from drf_spectacular.utils import extend_schema_field
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 
-from info.models import Appeal, Answer, News, NewsComment, NewsPicture, Quiz
+from info.models import (
+    Appeal, Answer, News, NewsComment, NewsPicture, ServiceCategory, Quiz,
+)
+from urban_utopia_2024.app_data import QUIZ_ANSWER_MAX_LEN
 from user.models import Address, User
 
 
@@ -215,6 +219,7 @@ class AppealUserPostSerializer(serializers.ModelSerializer):
             'address',
         )
 
+    @transaction.atomic
     def create(self, validated_data):
         address, _ = Address.objects.get_or_create(
             **validated_data.get('address')
@@ -245,8 +250,29 @@ class UserShortSerializer(serializers.ModelSerializer):
         )
 
 
+class ServiceCategorySerializer(serializers.ModelSerializer):
+    """Сериализатор представления категории услуг."""
+
+    class Meta:
+        model = ServiceCategory
+        fields = (
+            'id',
+            'name',
+        )
+
+
 class NewsCommentSerializer(serializers.ModelSerializer):
-    """Сериализатор получения картинок новости."""
+    """Сериализатор валидации комментария новости."""
+
+    class Meta:
+        model = NewsComment
+        fields = (
+            'text',
+        )
+
+
+class NewsCommentFullSerializer(serializers.ModelSerializer):
+    """Сериализатор получения комментариев новости."""
 
     author = UserShortSerializer()
 
@@ -290,7 +316,8 @@ class NewsSerializer(serializers.ModelSerializer):
 
     address = AddressSerializer()
     category = serializers.CharField(source='category.name')
-    comment = NewsCommentSerializer(many=True)
+    comment = NewsCommentFullSerializer(many=True)
+    municipal = MunicipalSerializer()
     quiz = QuizSerializer()
     picture = NewsPictureSerializer(many=True)
 
@@ -298,6 +325,7 @@ class NewsSerializer(serializers.ModelSerializer):
         model = News
         fields = (
             'id',
+            'municipal',
             'category',
             'text',
             'address',
@@ -306,6 +334,102 @@ class NewsSerializer(serializers.ModelSerializer):
             'quiz',
             'picture',
         )
+
+
+class QuizPostSerializer(serializers.ModelSerializer):
+    """Сериализатор создания опроса при создании новости."""
+
+    answers = serializers.ListField(child=serializers.CharField())
+
+    class Meta:
+        model = Quiz
+        fields = (
+            'title',
+            'answers',
+        )
+
+    def validate_answers(self, value):
+        """Производит валидацию вариантов ответа к опросу."""
+        if len(value) < 2:
+            raise serializers.ValidationError(
+                detail={
+                    "answers": (
+                        'В опросе не может быть менее 2 вариантов ответа.'
+                    )
+                },
+            )
+        for row in value:
+            if len(row) > QUIZ_ANSWER_MAX_LEN:
+                raise serializers.ValidationError(
+                    detail={
+                        "answers": (
+                            'Длина варианта ответа не может превышать '
+                            f'{QUIZ_ANSWER_MAX_LEN} символов.'
+                        )
+                    },
+                )
+        return value
+
+
+class NewsPostSerializer(serializers.ModelSerializer):
+    """Сериализатор публикации новости."""
+
+    address = AddressSerializer()
+    category = serializers.CharField()
+    quiz = QuizPostSerializer(required=False)
+    pictures = NewsPictureSerializer(many=True, required=False)
+
+    class Meta:
+        model = News
+        fields = (
+            'category',
+            'text',
+            'address',
+            'quiz',
+            'pictures',
+        )
+
+    def validate_category(self, value):
+        category: ServiceCategory = ServiceCategory.objects.filter(
+            name=value,
+        )
+        if not category.exists():
+            raise serializers.ValidationError(
+                detail='Указанной категории новостей не существует.'
+            )
+        return category.first()
+
+    @transaction.atomic
+    def create(self, validated_data):
+        address, _ = Address.objects.get_or_create(
+            **validated_data.get('address')
+        )
+        municipal: User = User.objects.get(id=self.context.get('municipal_id'))
+        news: News = News.objects.create(
+            municipal=municipal,
+            category=validated_data.get('category'),
+            text=validated_data.get('text'),
+            address=address,
+        )
+        quiz_data: dict[str, str] = validated_data.get('quiz')
+        if quiz_data:
+            quiz: Quiz = Quiz.objects.create(title=quiz_data.get('title'))
+            for answer in quiz_data.get('answers'):
+                Answer.objects.create(quiz=quiz, text=answer)
+            news.quiz: Quiz = quiz
+            news.save()
+        pictures_data: dict[str, str] = validated_data.get('pictures')
+        if pictures_data:
+            pictures_add: list[NewsPicture] = []
+            for picture in pictures_data:
+                pictures_add.append(
+                    NewsPicture(
+                        news=news,
+                        picture=picture.get('picture'),
+                    )
+                )
+            NewsPicture.objects.bulk_create(pictures_add)
+        return news
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
