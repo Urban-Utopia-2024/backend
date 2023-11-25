@@ -112,6 +112,11 @@ Authorization: Bearer admin_access
 # Authorization: Bearer ivan_access
 
 ###
+GET {{users}}?is_municipal=true HTTP/1.1
+Authorization: Bearer admin_access
+# Authorization: Bearer ivan_access
+
+###
 GET {{users}}1/ HTTP/1.1
 Authorization: Bearer admin_access
 # Authorization: Bearer ivan_access
