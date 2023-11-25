@@ -8,11 +8,87 @@ from user.validators import (
     PASS_ERROR, USER_FIRST_NAME_ERROR, USER_LAST_NAME_ERROR,
 )
 from api.v1.serializers import (
-    NewsSerializer, UserFullSerializer, UserRegisterSerializer,
+    AppealAdminSerializer, NewsSerializer, UserFullSerializer, UserRegisterSerializer,
 )
 
 DEFAULT_401: str = 'Учетные данные не были предоставлены.'
 DEFAULT_404: str = 'Страница не найдена.'
+
+APPEAL_SCHEMA = {
+    'list': extend_schema(
+        description='Возвращает список обращений.',
+        summary='Получить список обращений.',
+        responses={
+            status.HTTP_200_OK: AppealAdminSerializer,
+        },
+    ),
+    'retrieve': extend_schema(
+        description='Возвращает обращение с указанным идентификатором.',
+        summary='Получить обращение.',
+        responses={
+            status.HTTP_200_OK: AppealAdminSerializer,
+            status.HTTP_401_UNAUTHORIZED: inline_serializer(
+                name='appeals_retrieve_error_400',
+                fields={
+                    'detail': serializers.CharField(
+                        default=DEFAULT_401,
+                    ),
+                },
+            ),
+            status.HTTP_404_NOT_FOUND: inline_serializer(
+                name='appeals_retrieve_error_404',
+                fields={
+                    'detail': serializers.CharField(
+                        default=DEFAULT_404
+                    ),
+                },
+            ),
+        },
+    ),
+    'rate_answer': extend_schema(
+        description=(
+            'Оставляет оценку ответа обращения с указанным идентификатором.'
+        ),
+        summary='Оценить ответ обращения.',
+        responses={
+            status.HTTP_200_OK: inline_serializer(
+                name='appeals_rate_answer_200',
+                fields={
+                    'rating': serializers.CharField(
+                        default='Благодарим за оценку ответа!',
+                    ),
+                },
+            ),
+            status.HTTP_401_UNAUTHORIZED: inline_serializer(
+                name='appeals_rate_answer_error_400',
+                fields={
+                    'detail': serializers.CharField(
+                        default=DEFAULT_401,
+                    ),
+                },
+            ),
+            status.HTTP_403_FORBIDDEN: inline_serializer(
+                name='appeals_rate_answer_error_403',
+                fields={
+                    'detail': serializers.CharField(
+                        default=(
+                            'Вы не можете поставить оценку '
+                            'незавершенному обращению.'
+                        ),
+                    ),
+                },
+            ),
+            status.HTTP_404_NOT_FOUND: inline_serializer(
+                name='appeals_rate_answer_error_404',
+                fields={
+                    'detail': serializers.CharField(
+                        default=DEFAULT_404
+                    ),
+                },
+            ),
+        },
+    ),
+}
 
 NEWS_SCHEMA = {
     'list': extend_schema(
@@ -121,7 +197,7 @@ USERS_SCHEMA = {
         responses={
             status.HTTP_200_OK: UserFullSerializer,
             status.HTTP_401_UNAUTHORIZED: inline_serializer(
-                name='users_create_error_400',
+                name='users_list_error_400',
                 fields={
                     'detail': serializers.CharField(
                         default=DEFAULT_401,
@@ -136,7 +212,7 @@ USERS_SCHEMA = {
         responses={
             status.HTTP_200_OK: UserFullSerializer,
             status.HTTP_401_UNAUTHORIZED: inline_serializer(
-                name='users_create_error_400',
+                name='users_retrieve_error_400',
                 fields={
                     'detail': serializers.CharField(
                         default=DEFAULT_401,

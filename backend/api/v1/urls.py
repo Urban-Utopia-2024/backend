@@ -5,6 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from api.v1.serializers import CustomTokenObtainPairSerializer
 from api.v1.views import (
+    AppealViewSet,
     CustomTokenObtainPairView, CustomTokenRefreshView,
     NewsViewSet, UserViewSet,
 )
@@ -12,6 +13,7 @@ from api.v1.views import (
 router: DefaultRouter = DefaultRouter()
 
 ROUTER_DATA: list[dict[str, ModelViewSet]] = [
+    {'prefix': 'appeals', 'viewset': AppealViewSet},
     {'prefix': 'news', 'viewset': NewsViewSet},
     {'prefix': 'users', 'viewset': UserViewSet},
 ]

@@ -1,7 +1,8 @@
+from drf_spectacular.utils import extend_schema_field
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 
-from info.models import Answer, News, NewsComment, NewsPicture, Quiz
+from info.models import Appeal, Answer, News, NewsComment, NewsPicture, Quiz
 from user.models import Address, User
 
 
@@ -25,6 +26,15 @@ class AddressSerializer(serializers.ModelSerializer):
             'longitude',
         )
 
+class AppealRatingSerializer(serializers.ModelSerializer):
+    """Сериализатор проверки оценки обращения."""
+
+    class Meta:
+        model = Appeal
+        fields = (
+            'rating',
+        )
+
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     """
@@ -43,7 +53,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 class AnswerSerializer(serializers.ModelSerializer):
-    """Сериализатор ответов на опросы."""
+    """Сериализатор представления ответов на опросы."""
 
     user_count = serializers.SerializerMethodField()
 
@@ -55,6 +65,7 @@ class AnswerSerializer(serializers.ModelSerializer):
             'user_count',
         )
 
+    @extend_schema_field(int)
     def get_user_count(self, obj):
         return obj.answer_user.count()
 
@@ -77,6 +88,100 @@ class UserFullSerializer(serializers.ModelSerializer):
             'rating',
             'is_municipal',
             'municipal_name',
+        )
+
+
+class MunicipalSerializer(serializers.ModelSerializer):
+    """Сериализатор представления данных муниципальной службы."""
+
+    address = AddressSerializer()
+
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'municipal_name',
+            'address',
+            'email',
+            'phone',
+            'photo',
+        )
+
+
+class AppealAdminSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор представления обращения граждан.
+    
+    Используется для отображения информации администратору портала.
+    """
+
+    address = AddressSerializer()
+    municipal = UserFullSerializer()
+    user = UserFullSerializer()
+
+    class Meta:
+        model = Appeal
+        fields = (
+            'id',
+            'user',
+            'municipal',
+            'topic',
+            'text',
+            'pub_date',
+            'address',
+            'answer',
+            'status',
+            'rating',
+        )
+
+
+class AppealMunicipalSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор представления обращения граждан.
+    
+    Используется для отображения информации муниципальной службе.
+    """
+
+    address = AddressSerializer()
+    user = UserFullSerializer()
+
+    class Meta:
+        model = Appeal
+        fields = (
+            'id',
+            'user',
+            'topic',
+            'text',
+            'pub_date',
+            'address',
+            'answer',
+            'status',
+            'rating',
+        )
+
+
+class AppealUserSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор представления обращения граждан.
+    
+    Используется для отображения информации пользователю.
+    """
+
+    address = AddressSerializer()
+    municipal = MunicipalSerializer()
+
+    class Meta:
+        model = Appeal
+        fields = (
+            'id',
+            'municipal',
+            'topic',
+            'text',
+            'pub_date',
+            'address',
+            'answer',
+            'status',
+            'rating',
         )
 
 
