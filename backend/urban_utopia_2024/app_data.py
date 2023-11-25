@@ -103,6 +103,10 @@ USER_RATING_MAX_VAL: float = 100.0
 
 """Security data."""
 
+
+AUTH_TOKEN: str = 'auth_token'
+AUTH_JWT: str = 'auth_JWT'
+
 CITE_DOMAIN: str = os.getenv('CITE_DOMAIN')
 CITE_IP: str = os.getenv('CITE_IP')
 

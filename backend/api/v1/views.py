@@ -1,6 +1,9 @@
+from django.contrib.auth import authenticate
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import serializers, status
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -17,12 +20,47 @@ from api.v1.serializers import (
     UserFullSerializer, UserRegisterSerializer,
 )
 from api.v1.schemas_views import (
-    APPEAL_SCHEMA, NEWS_SCHEMA, TOKEN_OBTAIN_SCHEMA,
+    APPEAL_SCHEMA, DEFAULT_400_REQUIRED, NEWS_SCHEMA, TOKEN_OBTAIN_SCHEMA,
     TOKEN_REFRESH_SCHEMA, USERS_SCHEMA,
 )
 from info.models import Appeal, News, NewsComment
 from urban_utopia_2024.app_data import APPEAL_STAGE_COMPLETED
 from user.models import User
+
+
+class CustomAuthToken(ObtainAuthToken):
+
+    def post(self, request, *args, **kwargs):
+        email: str = request.data.get('email')
+        password: str = request.data.get('password')
+        if email is None or password is None:
+            return Response(
+                data={
+                    'email': DEFAULT_400_REQUIRED,
+                    'password': DEFAULT_400_REQUIRED,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        user: User = authenticate(email=email, password=password)
+        if not User:
+            return Response(
+                data={
+                    'detail': 'Указаны неверные email или password.'
+                },
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        token, _ = Token.objects.get_or_create(user=user)
+        response_data: dict[str, str] = {
+            'token': token.key,
+            'user_id': user.pk,
+        }
+        for attr in ('is_municipal', 'is_staff'):
+            if getattr(user, attr):
+                response_data[attr]: bool = True
+        return Response(
+            data=response_data,
+            status=status.HTTP_200_OK,
+        )
 
 
 @extend_schema_view(**APPEAL_SCHEMA)

@@ -6,9 +6,11 @@ from rest_framework.viewsets import ModelViewSet
 from api.v1.serializers import CustomTokenObtainPairSerializer
 from api.v1.views import (
     AppealViewSet,
-    CustomTokenObtainPairView, CustomTokenRefreshView,
+    CustomAuthToken, CustomTokenObtainPairView, CustomTokenRefreshView,
     NewsViewSet, UserViewSet,
 )
+from urban_utopia_2024.app_data import AUTH_TOKEN, AUTH_JWT
+from urban_utopia_2024.settings import AUTH_TYPE
 
 router: DefaultRouter = DefaultRouter()
 
@@ -25,13 +27,18 @@ for route in ROUTER_DATA:
         basename=route.get('prefix'),
     )
 
-token_urls = [
-    path('create/', CustomTokenObtainPairView.as_view(
-            serializer_class=CustomTokenObtainPairSerializer,
-        ), name='token_obtain_pair'
-    ),
-    path('refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),
-]
+if AUTH_TYPE == AUTH_JWT:
+    token_urls = [
+        path('create/', CustomTokenObtainPairView.as_view(
+                serializer_class=CustomTokenObtainPairSerializer,
+            ), name='token_obtain_pair'
+        ),
+        path('refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),  # noqa (E501)
+    ]
+elif AUTH_TYPE == AUTH_TOKEN:
+    token_urls = [
+        path('create/', CustomAuthToken.as_view(), name='token_obtain')
+    ]
 
 docs_urlpatterns = [
     path('schema/', SpectacularAPIView.as_view(), name='schema'),

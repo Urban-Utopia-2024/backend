@@ -4,6 +4,7 @@ import os
 from corsheaders.defaults import default_headers
 
 from urban_utopia_2024.app_data import (
+    AUTH_TOKEN, AUTH_JWT,
     BASE_DIR,
     DATABASE_SQLITE, DATABASE_POSTGRESQL,
     CITE_DOMAIN, CITE_IP, SECRET_KEY,
@@ -14,6 +15,8 @@ from urban_utopia_2024.app_data import (
 
 
 DEBUG = False
+
+AUTH_TYPE: str = AUTH_TOKEN
 
 
 """Celery settings."""
@@ -57,6 +60,15 @@ INSTALLED_APPS_THIRD_PARTY = [
     'django_celery_beat',
 ]
 
+if AUTH_TYPE == AUTH_TOKEN:
+    INSTALLED_APPS_THIRD_PARTY.append(
+        'rest_framework.authtoken',
+    )
+elif AUTH_TYPE == AUTH_JWT:
+    INSTALLED_APPS_THIRD_PARTY.append(
+        'rest_framework_simplejwt',
+    )
+
 INSTALLED_APPS_LOCAL = [
     'api',
     'info',
@@ -66,14 +78,16 @@ INSTALLED_APPS_LOCAL = [
 INSTALLED_APPS = INSTALLED_APPS_DJANGO + INSTALLED_APPS_THIRD_PARTY + INSTALLED_APPS_LOCAL
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny'
     ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+
+if AUTH_TYPE == AUTH_JWT:
+    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] = [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ]
 
 ROOT_URLCONF = 'urban_utopia_2024.urls'
 
