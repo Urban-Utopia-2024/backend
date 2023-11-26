@@ -27,12 +27,12 @@ services:
       - urban_utopia_2024_database
       - urban_utopia_2024_redis
 
-  # urban_utopia_2024_frontend:
-  #   image: thesuncatcher222/urban_utopia_2024_frontend:latest
-  #   volumes:
-  #     - urban_utopia_2024_static_volume:/app/dist
-  #   depends_on:
-  #     - urban_utopia_2024_backend
+  urban_utopia_2024_frontend:
+    image: thesuncatcher222/urban_utopia_2024_frontend:latest
+    volumes:
+      - urban_utopia_2024_static_volume:/app/dist
+    depends_on:
+      - urban_utopia_2024_backend
 
   urban_utopia_2024_gateway:
     image: thesuncatcher222/urban_utopia_2024_gateway:latest
@@ -43,4 +43,4 @@ services:
       - urban_utopia_2024_media_volume:/var/html/media/
     depends_on:
       - urban_utopia_2024_backend
-      # - urban_utopia_2024_frontend
+      - urban_utopia_2024_frontend
