@@ -84,6 +84,9 @@ Content-Type: application/json
 ##########################################################################
 
 ###
+GET {{news}} HTTP/1.1
+
+###
 POST {{news}} HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer admin_token_access
@@ -118,6 +121,11 @@ Authorization: Bearer admin_token_access
 ##########################################################################
 ################################# APPEAL ##################################
 ##########################################################################
+
+###
+GET {{appeals}} HTTP/1.1
+Authorization: Bearer admin_token_access
+# Authorization: Bearer ivan_token_access
 
 ###
 POST {{appeals}} HTTP/1.1
