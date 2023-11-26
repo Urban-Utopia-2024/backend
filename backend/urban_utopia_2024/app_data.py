@@ -41,6 +41,85 @@ DATABASE_SQLITE: dict[str, dict[str, str]] = {
 }
 
 
+"""Email data."""
+
+
+EMAIL_CODE_LENGTH: int = 8
+
+DEFAULT_FROM_EMAIL: str = os.getenv('DEFAULT_FROM_EMAIL')
+
+PASSWORD_RESET_LINK: str = None
+
+EMAIL_CONFIRM_EMAIL_SUBJECT: str = 'Подтверждение почты | Информационный портал'
+
+EMAIL_CONFIRM_EMAIL_TEXT: str = (
+    'Добро пожаловать на сайт информационного портала г.Екатеринбурга!'
+    '\n\n'
+    'Для подтверждения электронной почты пожалуйста введите '
+    'в появившемся окне на сайте код, указанный ниже:'
+    '\n\n'
+    '{secret_code}'
+    '\n\n'
+    '\n\n'
+    'С наилучшими пожеланиями,\n'
+    'Команда администрации г.Екатеринбурга.'
+)
+
+EMAIL_REGISTER_SUBJECT: str = 'Добро пожаловать | Информационный портал'
+
+EMAIL_REGISTER_TEXT: str = (
+    'Уважаемый {first_name} {second_name},'
+    '\n\n'
+    'Добро пожаловать на наш информационный портал, посвященный '
+    'административным новостям г. Екатеринбурга! Мы рады приветствовать '
+    'вас в нашем сообществе, где вы сможете быть в курсе последних событий, '
+    'связанных с жизнью города, а также воспользоваться удобными сервисами '
+    'для подачи заявлений и получения актуальной информации.'
+    '\n\n'
+    'Что вас ждет на нашем портале:'
+    '\n\n'
+    'Актуальные новости: Будьте в курсе всех событий города, следите за '
+    'обновлениями и изменениями в административной сфере.\n'
+    'Подача заявлений: Воспользуйтесь удобным сервисом для подачи различных '
+    'заявлений онлайн. Это быстро, удобно и без лишних хлопот.\n'
+    'Информационные ресурсы: Получайте доступ к полезным ресурсам, '
+    'документам и справочной информации, необходимой для граждан.\n'
+    'Мы уверены, что наш портал станет для вас надежным источником '
+    'информации, а функциональные возможности облегчат взаимодействие '
+    'с административной сферой города.\n'
+    '\n\n'
+    'Если у вас возникнут вопросы или предложения, не стесняйтесь '
+    'обращаться в нашу службу поддержки.'
+    '\n\n'
+    'С наилучшими пожеланиями,\n'
+    'Команда администрации г.Екатеринбурга.'
+)
+
+
+"""Email settings."""
+
+
+EMAIL_HOST: str = os.getenv('EMAIL_HOST')
+
+EMAIL_PORT: str = os.getenv('EMAIL_PORT')
+
+EMAIL_HOST_USER: str = os.getenv('EMAIL_HOST_USER')
+
+EMAIL_HOST_PASSWORD: str = os.getenv('EMAIL_HOST_PASSWORD')
+
+EMAIL_USE_TLS: str = os.getenv('EMAIL_USE_TLS', False)
+
+EMAIL_USE_SSL: str = os.getenv('EMAIL_USE_SSL', False)
+
+EMAIL_SSL_CERTFILE: str = os.getenv('EMAIL_SSL_CERTFILE', 'None')
+
+EMAIL_SSL_KEYFILE: str = os.getenv('EMAIL_SSL_KEYFILE', 'None')
+
+EMAIL_TIMEOUT: int = os.getenv('EMAIL_TIMEOUT')
+if EMAIL_TIMEOUT is not None:
+    EMAIL_TIMEOUT: int = int(EMAIL_TIMEOUT)
+
+
 """Models data."""
 
 
@@ -111,3 +190,11 @@ CITE_DOMAIN: str = os.getenv('CITE_DOMAIN')
 CITE_IP: str = os.getenv('CITE_IP')
 
 SECRET_KEY: str = os.getenv('SECRET_KEY')
+
+SECRET_SALT: str = os.getenv('SECRET_SALT')
+
+PASS_ITERATIONS: int = os.getenv('PASS_ITERATIONS')
+if PASS_ITERATIONS is not None:
+    PASS_ITERATIONS: int = int(PASS_ITERATIONS)
+
+USER_PASS_RAND_CYCLES: int = 2

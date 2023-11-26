@@ -7,6 +7,10 @@ from urban_utopia_2024.app_data import (
     AUTH_TOKEN, AUTH_JWT,
     BASE_DIR,
     DATABASE_SQLITE, DATABASE_POSTGRESQL,
+    DEFAULT_FROM_EMAIL,
+    EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD,
+    EMAIL_USE_TLS, EMAIL_USE_SSL, EMAIL_SSL_CERTFILE,
+    EMAIL_SSL_KEYFILE, EMAIL_TIMEOUT,
     CITE_DOMAIN, CITE_IP, SECRET_KEY,
 )
 
@@ -106,6 +110,44 @@ SPECTACULAR_SETTINGS = {
 }
 
 WSGI_APPLICATION = 'urban_utopia_2024.wsgi.application'
+
+
+"""Email settings."""
+
+
+DEFAULT_FROM_EMAIL = DEFAULT_FROM_EMAIL
+
+if DEBUG:
+    EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
+    EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST: str = EMAIL_HOST
+
+EMAIL_PORT: int = EMAIL_PORT
+
+EMAIL_HOST_USER: str = EMAIL_HOST_USER
+
+EMAIL_HOST_PASSWORD: str = EMAIL_HOST_PASSWORD
+
+if EMAIL_USE_TLS == 'True':
+    EMAIL_USE_TLS: bool = True
+else:
+    EMAIL_USE_TLS: bool = False
+
+if EMAIL_USE_SSL == 'True':
+    EMAIL_USE_SSL: bool = True
+else:
+    EMAIL_USE_SSL: bool = False
+
+if EMAIL_SSL_CERTFILE == 'None':
+    EMAIL_SSL_CERTFILE: None = None
+
+if EMAIL_SSL_KEYFILE == 'None':
+    EMAIL_SSL_KEYFILE: None = None
+
+EMAIL_TIMEOUT: int = EMAIL_TIMEOUT
 
 
 """Static files settings."""
