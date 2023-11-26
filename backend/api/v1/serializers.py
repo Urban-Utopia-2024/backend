@@ -3,10 +3,13 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 
+from api.v1.utils import create_secret_code, send_mail
 from info.models import (
     Appeal, Answer, News, NewsComment, NewsPicture, ServiceCategory, Quiz,
 )
-from urban_utopia_2024.app_data import QUIZ_ANSWER_MAX_LEN
+from urban_utopia_2024.app_data import (
+    EMAIL_REGISTER_SUBJECT, EMAIL_REGISTER_TEXT, QUIZ_ANSWER_MAX_LEN,
+)
 from user.models import Address, User
 
 
@@ -447,6 +450,8 @@ class NewsPostSerializer(serializers.ModelSerializer):
 class UserRegisterSerializer(serializers.ModelSerializer):
     """Сериализатор регистрации пользователя."""
 
+    secret_code = serializers.CharField()
+
     class Meta:
         model = User
         fields = (
@@ -456,13 +461,51 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             'mid_name',
             'last_name',
             'phone',
+            'secret_code',
         )
         extra_kwargs = {
             'password': {'write_only': True},
+            'secret_code': {'write_only': True},
         }
+
+    def validate(self, attrs):
+        attrs: dict = super().validate(attrs)
+        self._validate_secret_code(
+            email=attrs.get('email'),
+            secret_code=attrs.pop('secret_code')
+        )
+        return attrs
 
     def create(self, validated_data):
         isinstance: User = super().create(validated_data)
         isinstance.set_password(isinstance.password)
         isinstance.save()
+        send_mail(
+            subject=EMAIL_REGISTER_SUBJECT,
+            message=EMAIL_REGISTER_TEXT.format(
+                first_name=isinstance.first_name,
+                last_name=isinstance.last_name,
+            ),
+            to=(isinstance.email,)
+        )
         return isinstance
+
+    def to_representation(self, instance):
+        original_fields = set(self.fields.keys())
+        fields_to_exclude = {'secret_code', }
+        fields_to_include = original_fields - fields_to_exclude
+        self.fields = {
+            field: self.fields[field] for field in fields_to_include
+        }
+        return super().to_representation(instance)
+
+    def _validate_secret_code(self, email: str, secret_code: str):
+        """Производит валидацию секретного кода для регистрации."""
+        valid_code: str = create_secret_code(email=email)
+        if valid_code != secret_code:
+            raise serializers.ValidationError(
+                detail={
+                    'secret_code': 'Указан недействительный код.',
+                }
+            )
+        return
