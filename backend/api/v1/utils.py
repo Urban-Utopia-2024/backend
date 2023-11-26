@@ -17,11 +17,9 @@ def create_secret_code(email: str) -> str:
     random.seed(email_secret)
     pass_chars: list[str] = []
     for _ in range(USER_PASS_RAND_CYCLES):
-        lowercase: str = random.choice(string.ascii_lowercase)
         uppercase: str = random.choice(string.ascii_uppercase)
         digit: str = random.choice(string.digits)
-        special: str = random.choice('!_@#$%^&+=')
-        pass_chars.extend([lowercase, uppercase, digit, special])
+        pass_chars.extend([uppercase, digit])
     return ''.join(pass_chars)
 
 
