@@ -14,7 +14,7 @@ from urban_utopia_2024.app_data import (
 """App settings."""
 
 
-DEBUG = False
+DEBUG = True
 
 AUTH_TYPE: str = AUTH_TOKEN
 

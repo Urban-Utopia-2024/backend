@@ -14,7 +14,8 @@ from urban_utopia_2024.app_data import (
 )
 from user.validators import (
     validate_building, validate_email, validate_lat, validate_lon,
-    validate_first_name, validate_last_name, validate_password,
+    validate_first_name, validate_mid_name, validate_last_name,
+    validate_password,
 )
 
 
@@ -189,6 +190,16 @@ class User(AbstractUser):
         validators=(
             validate_last_name,
         ),
+    )
+    mid_name = models.CharField(
+        verbose_name='Отчество пользователя',
+        max_length=USER_NAME_MAX_LEN,
+        validators=(
+            validate_mid_name,
+        ),
+        default=None,
+        blank=True,
+        null=True,
     )
     address = models.ForeignKey(
         verbose_name='Адрес',

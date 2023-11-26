@@ -94,6 +94,7 @@ class UserAdmin(admin.ModelAdmin):
             - ID пользователя (id)
             - электронная почта пользователя (email)
             - имя пользователя (first_name)
+            - отчество пользователя (mid_name)
             - фамилия пользователя (last_name)
             - ID адреса пользователя (address)
             - контактный телефон по стандарту E.164 (phone)
@@ -105,6 +106,7 @@ class UserAdmin(admin.ModelAdmin):
         - list_editable (tuple) - список полей для изменения в интерфейсе:
             - электронная почта пользователя (email)
             - имя пользователя (first_name)
+            - отчество пользователя (mid_name)
             - фамилия пользователя (last_name)
             - ID адреса пользователя (address)
             - контактный телефон по стандарту E.164 (phone)
@@ -115,6 +117,7 @@ class UserAdmin(admin.ModelAdmin):
             - название муниципальной службы (municipal_name)
         - list_filter (tuple) - список фильтров:
             - имя пользователя (first_name)
+            - отчество пользователя (mid_name)
             - фамилия пользователя (last_name)
             - рейтинг (rating)
             - статус администратора (is_staff)
@@ -129,6 +132,7 @@ class UserAdmin(admin.ModelAdmin):
         'id',
         'email',
         'first_name',
+        'mid_name',
         'last_name',
         'address',
         'phone',
@@ -141,6 +145,7 @@ class UserAdmin(admin.ModelAdmin):
     list_editable = (
         'email',
         'first_name',
+        'mid_name',
         'last_name',
         'address',
         'phone',
@@ -152,6 +157,7 @@ class UserAdmin(admin.ModelAdmin):
     )
     list_filter = (
         'first_name',
+        'mid_name',
         'last_name',
         'rating',
         'is_staff',

@@ -29,9 +29,13 @@ PASS_ERROR: str = gettext(
     '- включает хотя бы одну заглавную букву (A-Z); '
     '- включает хотя бы один специальный символ (!_@#$%^&+=).'
 )
-USER_NAME_PATTERN: str = r'^[А-ЯЁа-яё][А-ЯЁа-яё\s\-]{1,28}[А-ЯЁа-яё]$'
+USER_FIRST_NAME_PATTERN: str = r'^[А-ЯЁа-яё]{1,28}$'
+USER_LAST_NAME_PATTERN: str = r'^[А-ЯЁа-яё][А-ЯЁа-яё\s\-]{1,28}[А-ЯЁа-яё]$'
 USER_FIRST_NAME_ERROR: str = gettext(
     'Укажите корректное имя (например: Иван)'
+)
+USER_MID_NAME_ERROR: str = gettext(
+    'Укажите корректное отчество (например: Ивановна)'
 )
 USER_LAST_NAME_ERROR: str = gettext(
     'Укажите корректную фамилию (например: Иванов или Иванова-Петрова)'
@@ -54,14 +58,21 @@ def validate_email(value: str) -> str:
 
 def validate_first_name(value: str) -> str:
     """Производит валидацию имени пользователя."""
-    if value is None or re.fullmatch(USER_NAME_PATTERN, value):
+    if re.fullmatch(USER_FIRST_NAME_PATTERN, value):
         return value
     raise ValidationError(USER_FIRST_NAME_ERROR)
 
 
+def validate_mid_name(value: str) -> str:
+    """Производит валидацию отчества пользователя."""
+    if value is None or re.fullmatch(USER_FIRST_NAME_PATTERN, value):
+        return value
+    raise ValidationError(USER_MID_NAME_ERROR)
+
+
 def validate_last_name(value: str) -> str:
     """Производит валидацию фамилии пользователя."""
-    if value is None or re.fullmatch(USER_NAME_PATTERN, value):
+    if re.fullmatch(USER_LAST_NAME_PATTERN, value):
         return value
     raise ValidationError(USER_LAST_NAME_ERROR)
 

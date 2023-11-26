@@ -38,11 +38,12 @@ POST {{users}} HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "custom.user.1@email.com",
+  "email": "custom.user.3@email.com",
   "password": "CustomPass!1",
   "first_name": "Иван",
+  "mid_name": "Иванович",
   "last_name": "Иванов-Сергеев",
-  "phone": "+7 911 375 75 75"
+  "phone": "+7 911 375 75 73"
 }
 
 ###

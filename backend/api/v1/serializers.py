@@ -96,6 +96,7 @@ class UserFullSerializer(serializers.ModelSerializer):
             'id',
             'email',
             'first_name',
+            'mid_name',
             'last_name',
             'address',
             'phone',
@@ -245,6 +246,7 @@ class UserShortSerializer(serializers.ModelSerializer):
             'id',
             'email',
             'first_name',
+            'mid_name',
             'last_name',
             'rating',
         )
@@ -441,6 +443,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             'email',
             'password',
             'first_name',
+            'mid_name',
             'last_name',
             'phone',
         )
