@@ -67,6 +67,16 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
 
+class EmailConfirmSerializer(serializers.ModelSerializer):
+    """Сериализатор проверки email."""
+
+    class Meta:
+        model = User
+        fields = (
+            'email',
+        )
+
+
 class AnswerSerializer(serializers.ModelSerializer):
     """Сериализатор представления ответов на опросы."""
 

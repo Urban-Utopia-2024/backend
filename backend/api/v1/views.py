@@ -16,7 +16,7 @@ from api.v1.permissions import IsMunicipal
 from api.v1.serializers import (
     AppealAdminSerializer, AppealAnswerSerializer, AppealMunicipalSerializer,
     AppealRatingSerializer, AppealUserSerializer, AppealUserPostSerializer,
-    MunicipalSerializer,
+    EmailConfirmSerializer, MunicipalSerializer,
     NewsSerializer, NewsCommentSerializer, NewsPostSerializer,
     UserFullSerializer, UserRegisterSerializer, UserShortSerializer,
 )
@@ -24,8 +24,12 @@ from api.v1.schemas_views import (
     APPEAL_SCHEMA, DEFAULT_400_REQUIRED, NEWS_SCHEMA,
     TOKEN_JWT_OBTAIN_SCHEMA, TOKEN_JWT_REFRESH_SCHEMA, USERS_SCHEMA,
 )
+from api.v1.utils import create_secret_code, send_mail
 from info.models import Appeal, News, NewsComment
-from urban_utopia_2024.app_data import APPEAL_STAGE_COMPLETED
+from urban_utopia_2024.app_data import (
+    APPEAL_STAGE_COMPLETED,
+    EMAIL_CONFIRM_EMAIL_SUBJECT, EMAIL_CONFIRM_EMAIL_TEXT,
+)
 from user.models import User
 
 
@@ -279,6 +283,28 @@ class UserViewSet(ModelViewSet):
         )
 
     @action(
+        methods=('post',),
+        detail=False,
+        url_path='confirm_email',
+    )
+    def confirm_email(self, request):
+        """Генерирует секретный код подтверждения почты."""
+        serializer: serializers = EmailConfirmSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email: str = serializer.validated_data.get('email')
+        secret_code: str = create_secret_code(email=email)
+        send_mail(
+            subject=EMAIL_CONFIRM_EMAIL_SUBJECT,
+            message=EMAIL_CONFIRM_EMAIL_TEXT.format(
+                secret_code=secret_code,
+            ),
+            to=(email,),
+        )
+        return Response(
+            status=status.HTTP_200_OK,
+        )
+
+    @action(
         methods=('get',),
         detail=False,
         url_path='me',
@@ -295,5 +321,5 @@ class UserViewSet(ModelViewSet):
         response_serializer: serializers = serializer(instance=user)
         return Response(
             data=response_serializer.data,
-            status=status.HTTP_200_OK
+            status=status.HTTP_200_OK,
         )
