@@ -34,7 +34,7 @@ services:
       context: ../frontend
       dockerfile: Dockerfile
     volumes:
-      - urban_utopia_2024_static_volume:/app/build
+      - urban_utopia_2024_static_volume:/app/dist
     depends_on:
       - urban_utopia_2024_backend
 
