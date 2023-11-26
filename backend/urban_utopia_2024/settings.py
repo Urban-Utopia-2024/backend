@@ -5,7 +5,7 @@ from corsheaders.defaults import default_headers
 
 from urban_utopia_2024.app_data import (
     AUTH_TOKEN, AUTH_JWT,
-    BASE_DIR,
+    BASE_DIR, DEBUG,
     DATABASE_SQLITE, DATABASE_POSTGRESQL,
     DEFAULT_FROM_EMAIL,
     EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD,
@@ -18,7 +18,7 @@ from urban_utopia_2024.app_data import (
 """App settings."""
 
 
-DEBUG = False
+DEBUG = DEBUG
 
 AUTH_TYPE: str = AUTH_TOKEN
 

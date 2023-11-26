@@ -11,6 +11,12 @@ BASE_DIR: Path = Path(__file__).resolve().parent.parent
 
 load_dotenv(os.path.join(BASE_DIR, '.env'), verbose=True)
 
+DEBUG = os.getenv('DB_ENGINE')
+if DEBUG == 'True':
+    DEBUG: bool = True
+else:
+    DEBUG: bool = False
+
 
 """Django data."""
 
