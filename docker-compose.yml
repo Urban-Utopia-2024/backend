@@ -29,14 +29,14 @@ services:
       - urban_utopia_2024_database
       - urban_utopia_2024_redis
 
-  # urban_utopia_2024_frontend:
-  #   build:
-  #     context: ../frontend
-  #     dockerfile: Dockerfile
-  #   volumes:
-  #     - urban_utopia_2024_static_volume:/app/build
-  #   depends_on:
-  #     - urban_utopia_2024_backend
+  urban_utopia_2024_frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    volumes:
+      - urban_utopia_2024_static_volume:/app/build
+    depends_on:
+      - urban_utopia_2024_backend
 
   urban_utopia_2024_gateway:
     image: nginx:1.19.3-alpine
@@ -48,4 +48,4 @@ services:
       - urban_utopia_2024_media_volume:/var/html/media/
     depends_on:
       - urban_utopia_2024_backend
-      # - urban_utopia_2024_frontend
+      - urban_utopia_2024_frontend
