@@ -38,12 +38,13 @@ POST {{users}} HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "custom.user.1@email.com",
+  "email": "TheSuncatcher222@gmail.com",
   "password": "CustomPass!1",
   "first_name": "Иван",
   "mid_name": "Иванович",
   "last_name": "Иванов-Сергеев",
-  "phone": "+7 911 375 75 73"
+  "phone": "+7 911 375 75 72",
+  "secret_code": "E4I5E4"
 }
 
 ###
@@ -159,6 +160,14 @@ Authorization: Bearer admin_token_access
 GET {{users}}1/ HTTP/1.1
 Authorization: Bearer admin_token_access
 # Authorization: Bearer ivan_token_access
+
+###
+POST {{users}}confirm_email/ HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "TheSuncatcher222@gmail.com"
+}
 
 ###
 GET {{users}}me/ HTTP/1.1
