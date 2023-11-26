@@ -5,32 +5,12 @@ from urban_utopia_2024.app_data import (
     APPEAL_RATING_MAX_VAL, APPEAL_RATING_MESSAGE,
     APPEAL_STATUS_CHOICES, APPEAL_STAGE_INITIAL, APPEAL_STATUS_MAX_LEN,
     APPEAL_TEXT_MAX_LEN, APPEAL_TOPIC_MAX_LEN,
-    NEWS_CATEGORY_CHOICES, NEWS_CATEGORY_MAX_LEN,
     NEWS_COMMENT_MAX_LEN, NEWS_COMMENT_SLICE,
     NEWS_PICTURES_PATH, NEWS_TEXT_MAX_LEN,
     TASK_TITLE_MAX_LEN,
     QUIZ_ANSWER_MAX_LEN, QUIZ_ANSWER_SLICE, QUIZ_TITLE_MAX_LEN,
 )
-from user.models import Address, User
-
-
-class ServiceCategory(models.Model):
-    """Модель категорий услуг."""
-
-    name = models.CharField(
-        verbose_name='Название',
-        max_length=NEWS_CATEGORY_MAX_LEN,
-        choices=NEWS_CATEGORY_CHOICES,
-        unique=True,
-    )
-
-    class Meta:
-        ordering = ('id',)
-        verbose_name = 'Категория новостей'
-        verbose_name_plural = 'Категории новостей'
-
-    def __str__(self):
-        return self.name
+from user.models import Address, ServiceCategory, User
 
 
 class Task(models.Model):

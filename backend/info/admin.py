@@ -3,7 +3,7 @@ from django.contrib import admin
 from info.models import (
     Answer, AnswerUser, Appeal,
     News, NewsComment, NewsPicture,
-    ServiceCategory, Task, Quiz,
+    Task, Quiz,
 )
 from urban_utopia_2024.app_data import ADMIN_LIST_PER_PAGE
 
@@ -200,34 +200,6 @@ class NewsAdmin(admin.ModelAdmin):
         'text',
         'pub_date',
         'quiz',
-    )
-    list_per_page = ADMIN_LIST_PER_PAGE
-
-
-@admin.register(ServiceCategory)
-class ServiceCategoryAdmin(admin.ModelAdmin):
-    """
-    Переопределяет административный интерфейс Django для модели ServiceCategory.  # noqa (E501)
-
-    Атрибуты:
-        - list_display (tuple) - список полей для отображения в интерфейсе:
-            - ID категории новостей (id)
-            - название категории (name)
-        - list_editable (tuple) - список полей для изменения в интерфейсе:
-            - название категории (name)
-        - search_fields (tuple) - список полей для поиска объектов:
-            - название категории (name)
-        - list_per_page (int) - количество объектов на одной странице
-    """
-    list_display = (
-        'id',
-        'name',
-    )
-    list_editable = (
-        'name',
-    )
-    search_fields = (
-        'name',
     )
     list_per_page = ADMIN_LIST_PER_PAGE
 

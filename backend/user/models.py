@@ -9,6 +9,7 @@ from urban_utopia_2024.app_data import (
     ADDRESS_APARTMENT_MAX_VAL, ADDRESS_BUILDING_MAX_LEN, ADDRESS_CITY_MAX_LEN,
     ADDRESS_DISTRICT_MAX_LEN, ADDRESS_INDEX_MAX_VAL, ADDRESS_ENTRANCE_MAX_VAL,
     ADDRESS_FLOOR_MAX_VAL, ADDRESS_HOUSE_MAX_VAL, ADDRESS_STREET_MAX_LEN,
+    NEWS_CATEGORY_CHOICES, NEWS_CATEGORY_MAX_LEN,
     USER_FULL_EMAIL_MAX_LEN, USER_NAME_MAX_LEN, USER_PASS_MAX_LEN,
     USER_PHOTO_PATH, USER_RATING_MAX_VAL,
 )
@@ -128,6 +129,25 @@ class Address(models.Model):
         return address
 
 
+class ServiceCategory(models.Model):
+    """Модель категорий услуг."""
+
+    name = models.CharField(
+        verbose_name='Название',
+        max_length=NEWS_CATEGORY_MAX_LEN,
+        choices=NEWS_CATEGORY_CHOICES,
+        unique=True,
+    )
+
+    class Meta:
+        ordering = ('id',)
+        verbose_name = 'Категория услуг'
+        verbose_name_plural = 'Категории услуг'
+
+    def __str__(self):
+        return self.name
+
+
 class UserManager(BaseUserManager):
     """Менеджер модели пользователя."""
 
@@ -242,6 +262,15 @@ class User(AbstractUser):
     municipal_name = models.CharField(
         verbose_name='Название муниципальной службы',
         max_length=USER_NAME_MAX_LEN,
+        blank=True,
+        null=True,
+    )
+    municipal_type = models.ForeignKey(
+        verbose_name='Категория деятельности',
+        to=ServiceCategory,
+        related_name='municipal',
+        on_delete=models.PROTECT,
+        default=None,
         blank=True,
         null=True,
     )
