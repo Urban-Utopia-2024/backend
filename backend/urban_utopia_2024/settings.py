@@ -84,7 +84,12 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
-if AUTH_TYPE == AUTH_JWT:
+if AUTH_TYPE == AUTH_TOKEN:
+    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] = [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+
+elif AUTH_TYPE == AUTH_JWT:
     REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] = [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ]
