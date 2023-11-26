@@ -26,9 +26,11 @@ from api.v1.schemas_views import (
 )
 from api.v1.utils import create_secret_code, send_mail
 from info.models import Appeal, News, NewsComment
+from info.tasks import send_mass_mail_async
 from urban_utopia_2024.app_data import (
-    APPEAL_STAGE_COMPLETED,
+    APPEAL_STAGE_COMPLETED, CITE_DOMAIN,
     EMAIL_CONFIRM_EMAIL_SUBJECT, EMAIL_CONFIRM_EMAIL_TEXT,
+    EMAIL_NEWS_SUBJECT, EMAIL_NEWS_TEXT,
 )
 from user.models import User
 
@@ -219,6 +221,13 @@ class NewsViewSet(ModelViewSet):
         news_instance: News = serializer.save()
         response_serializer: serializers = NewsSerializer(
             instance=news_instance
+        )
+        send_mass_mail_async.delay(
+            subject=EMAIL_NEWS_SUBJECT,
+            message=EMAIL_NEWS_TEXT.format(
+                category=news_instance.category,
+                link=f'https://{CITE_DOMAIN}/api/v1/news/{news_instance.id}/',
+            ),
         )
         return Response(
             data=response_serializer.data,
