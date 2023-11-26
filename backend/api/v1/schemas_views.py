@@ -14,7 +14,7 @@ from api.v1.serializers import (
     AppealAdminSerializer, AppealAnswerSerializer, AppealRatingSerializer,
     AppealUserSerializer, AppealUserPostSerializer,
     NewsSerializer, NewsPostSerializer,
-    UserFullSerializer, UserRegisterSerializer,
+    UserFullSerializer, UserShortSerializer, UserRegisterSerializer,
 )
 
 DEFAULT_400_REQUIRED: str = 'Обязательное поле.'
@@ -36,7 +36,7 @@ APPEAL_SCHEMA = {
         responses={
             status.HTTP_200_OK: AppealAdminSerializer,
             status.HTTP_401_UNAUTHORIZED: inline_serializer(
-                name='appeals_retrieve_error_400',
+                name='appeals_retrieve_error_401',
                 fields={
                     'detail': serializers.CharField(
                         default=DEFAULT_401,
@@ -102,7 +102,7 @@ APPEAL_SCHEMA = {
                 },
             ),
             status.HTTP_401_UNAUTHORIZED: inline_serializer(
-                name='appeals_post_answer_error_400',
+                name='appeals_post_answer_error_401',
                 fields={
                     'detail': serializers.CharField(
                         default=DEFAULT_401,
@@ -145,7 +145,7 @@ APPEAL_SCHEMA = {
                 },
             ),
             status.HTTP_401_UNAUTHORIZED: inline_serializer(
-                name='appeals_rate_answer_error_400',
+                name='appeals_rate_answer_error_401',
                 fields={
                     'detail': serializers.CharField(
                         default=DEFAULT_401,
@@ -339,7 +339,7 @@ USERS_SCHEMA = {
         responses={
             status.HTTP_200_OK: UserFullSerializer,
             status.HTTP_401_UNAUTHORIZED: inline_serializer(
-                name='users_list_error_400',
+                name='users_list_error_401',
                 fields={
                     'detail': serializers.CharField(
                         default=DEFAULT_401,
@@ -347,7 +347,7 @@ USERS_SCHEMA = {
                 },
             ),
             status.HTTP_403_FORBIDDEN: inline_serializer(
-                name='users_retrieve_error_403',
+                name='users_list_error_403',
                 fields={
                     'detail': serializers.CharField(
                         default=DEFAULT_403,
@@ -362,7 +362,7 @@ USERS_SCHEMA = {
         responses={
             status.HTTP_200_OK: UserFullSerializer,
             status.HTTP_401_UNAUTHORIZED: inline_serializer(
-                name='users_retrieve_error_400',
+                name='users_retrieve_error_401',
                 fields={
                     'detail': serializers.CharField(
                         default=DEFAULT_401,
@@ -382,6 +382,21 @@ USERS_SCHEMA = {
                 fields={
                     'detail': serializers.CharField(
                         default=DEFAULT_404
+                    ),
+                },
+            ),
+        },
+    ),
+    'me': extend_schema(
+        description='Возвращает авторизованного пользователя.',
+        summary='Получить авторизованного пользователя.',
+        responses={
+            status.HTTP_200_OK: UserShortSerializer,
+            status.HTTP_401_UNAUTHORIZED: inline_serializer(
+                name='users_me_retrieve_error_401',
+                fields={
+                    'detail': serializers.CharField(
+                        default=DEFAULT_401,
                     ),
                 },
             ),

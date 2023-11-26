@@ -16,8 +16,9 @@ from api.v1.permissions import IsMunicipal
 from api.v1.serializers import (
     AppealAdminSerializer, AppealAnswerSerializer, AppealMunicipalSerializer,
     AppealRatingSerializer, AppealUserSerializer, AppealUserPostSerializer,
+    MunicipalSerializer,
     NewsSerializer, NewsCommentSerializer, NewsPostSerializer,
-    UserFullSerializer, UserRegisterSerializer,
+    UserFullSerializer, UserRegisterSerializer, UserShortSerializer,
 )
 from api.v1.schemas_views import (
     APPEAL_SCHEMA, DEFAULT_400_REQUIRED, NEWS_SCHEMA,
@@ -255,7 +256,9 @@ class UserViewSet(ModelViewSet):
         return UserFullSerializer
 
     def get_permissions(self):
-        if self.request.method == 'GET':
+        if self.action == 'me':
+            self.permission_classes = [IsAuthenticated,]
+        elif self.request.method == 'GET':
             self.permission_classes = [IsAdminUser,]
         return super().get_permissions()
 
@@ -273,4 +276,24 @@ class UserViewSet(ModelViewSet):
         ).filter(
             is_staff=False,
             is_municipal=False,
+        )
+
+    @action(
+        methods=('get',),
+        detail=False,
+        url_path='me',
+    )
+    def me(self, request):
+        """Получить данные пользователя в текущей сессии."""
+        user: User = self.request.user
+        if user.is_municipal:
+            serializer: serializers = MunicipalSerializer
+        elif user.is_staff:
+            serializer: serializers = UserFullSerializer
+        else:
+            serializer: serializers = UserShortSerializer
+        response_serializer: serializers = serializer(instance=user)
+        return Response(
+            data=response_serializer.data,
+            status=status.HTTP_200_OK
         )

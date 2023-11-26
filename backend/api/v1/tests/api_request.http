@@ -38,7 +38,7 @@ POST {{users}} HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "custom.user.3@email.com",
+  "email": "custom.user.1@email.com",
   "password": "CustomPass!1",
   "first_name": "Иван",
   "mid_name": "Иванович",
@@ -157,5 +157,10 @@ Authorization: Bearer admin_token_access
 
 ###
 GET {{users}}1/ HTTP/1.1
+Authorization: Bearer admin_token_access
+# Authorization: Bearer ivan_token_access
+
+###
+GET {{users}}me/ HTTP/1.1
 Authorization: Bearer admin_token_access
 # Authorization: Bearer ivan_token_access
