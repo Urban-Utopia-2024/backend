@@ -13,9 +13,10 @@ from user.validators import (
 from api.v1.serializers import (
     AppealAdminSerializer, AppealAnswerSerializer, AppealRatingSerializer,
     AppealUserSerializer, AppealUserPostSerializer,
-    NewsSerializer, NewsPostSerializer,
+    EmailConfirmSerializer, NewsSerializer, NewsPostSerializer,
     UserFullSerializer, UserShortSerializer, UserRegisterSerializer,
 )
+from user.validators import EMAIL_ERROR
 
 DEFAULT_400_REQUIRED: str = 'Обязательное поле.'
 DEFAULT_401: str = 'Учетные данные не были предоставлены.'
@@ -320,6 +321,11 @@ USERS_SCHEMA = {
                             'Введенный номер телефона не действителен.'
                         ),
                     ),
+                    'secret_code': serializers.CharField(
+                        default=(
+                            'Указан недействительный код.'
+                        ),
+                    ),
                 },
             ),
         },
@@ -382,6 +388,22 @@ USERS_SCHEMA = {
                 fields={
                     'detail': serializers.CharField(
                         default=DEFAULT_404
+                    ),
+                },
+            ),
+        },
+    ),
+    'confirm_email': extend_schema(
+        description='Отправляет код подтверждения почты.',
+        summary='Отправить код подтверждения почты.',
+        request=EmailConfirmSerializer,
+        responses={
+            status.HTTP_200_OK: None,
+            status.HTTP_400_BAD_REQUEST: inline_serializer(
+                name='confirm_email_error_400',
+                fields={
+                    'email': serializers.CharField(
+                        default=EMAIL_ERROR,
                     ),
                 },
             ),
