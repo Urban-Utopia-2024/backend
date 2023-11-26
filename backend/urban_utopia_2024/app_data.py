@@ -17,6 +17,17 @@ if DEBUG == 'True':
 else:
     DEBUG: bool = False
 
+DEBUG_DB = os.getenv('DEBUG_DB')
+if DEBUG_DB == 'True':
+    DEBUG_DB: bool = True
+else:
+    DEBUG_DB: bool = False
+
+DEBUG_MAIL = os.getenv('DEBUG')
+if DEBUG_MAIL == 'True':
+    DEBUG_MAIL: bool = True
+else:
+    DEBUG_MAIL: bool = False
 
 """Django data."""
 

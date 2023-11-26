@@ -5,7 +5,7 @@ from corsheaders.defaults import default_headers
 
 from urban_utopia_2024.app_data import (
     AUTH_TOKEN, AUTH_JWT,
-    BASE_DIR, DEBUG,
+    BASE_DIR, DEBUG, DEBUG_DB, DEBUG_MAIL,
     DATABASE_SQLITE, DATABASE_POSTGRESQL,
     DEFAULT_FROM_EMAIL,
     EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD,
@@ -44,7 +44,7 @@ CELERY_BEAT_SCHEDULE = {
 """Django settings."""
 
 
-DATABASES = DATABASE_SQLITE if DEBUG else DATABASE_POSTGRESQL
+DATABASES = DATABASE_SQLITE if DEBUG_DB else DATABASE_POSTGRESQL
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -117,7 +117,7 @@ WSGI_APPLICATION = 'urban_utopia_2024.wsgi.application'
 
 DEFAULT_FROM_EMAIL = DEFAULT_FROM_EMAIL
 
-if DEBUG:
+if DEBUG_MAIL:
     EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 else:
