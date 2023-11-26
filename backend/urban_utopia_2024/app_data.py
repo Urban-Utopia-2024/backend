@@ -32,6 +32,9 @@ else:
 
 """Django data."""
 
+# Указывает по сколько группировать пользователей для рассылки
+# писем через info.tasks.send_mass_mail_async задачу Celery.
+CHUNK_EMAIL: int = 10
 
 DB_ENGINE: str = os.getenv('DB_ENGINE')
 DB_USER: str = os.getenv('POSTGRES_USER')
@@ -80,6 +83,19 @@ EMAIL_CONFIRM_EMAIL_TEXT: str = (
     '\n\n'
     'С наилучшими пожеланиями,\n'
     'Команда администрации г. Екатеринбурга.'
+)
+
+EMAIL_NEWS_SUBJECT: str = 'Новости города | Информационный портал'
+
+EMAIL_NEWS_TEXT: str = (
+    'На новостном портале появилась новость из категории {category}!'
+    '\n\n'
+    'Ознакомиться с ней вы можете по ссылке:'
+    '\n\n'
+    '{link}'
+    '\n\n'
+    'С наилучшими пожеланиями,\n'
+    'Команда администрации г.Екатеринбурга.'
 )
 
 EMAIL_REGISTER_SUBJECT: str = 'Добро пожаловать | Информационный портал'
